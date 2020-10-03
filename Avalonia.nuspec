@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Jetbrains.Avalonia</id>
+    <version>0.10.999</version>
+    <authors>Avalonia</authors>
+    <owners>Avalonia</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://avaloniaui.net/</projectUrl>
+    <iconUrl>https://avatars2.githubusercontent.com/u/14075148?s=200</iconUrl>
+    <description>Avalonia is a WPF/UWP-inspired cross-platform XAML-based UI framework providing a flexible styling system and supporting a wide range of Operating Systems such as Windows (.NET Framework, .NET Core), Linux (via Xorg), MacOS and with experimental support for Android and iOS.</description>
+    <releaseNotes>https://github.com/AvaloniaUI/Avalonia/releases</releaseNotes>
+    <copyright>Copyright 2020 © The AvaloniaUI Project</copyright>
+    <tags>avalonia avaloniaui mvvm rx reactive extensions android ios mac forms wpf net netstandard net461 uwp xamarin</tags>
+    <repository type="git" url="https://github.com/AvaloniaUI/Avalonia/" />
+    <dependencies>
+    <group targetFramework=".NETFramework4.6.1">
+      <dependency id="JetBrains.HarfBuzzSharp" version="2.6.2" exclude="Build,Analyzers" />
+      <dependency id="JetBrains.SkiaSharp" version="2.80.6" exclude="Build,Analyzers" />
+      <dependency id="JetBrains.Annotations" version="10.3.0" exclude="Build,Analyzers" />
+      <dependency id="System.ComponentModel.Annotations" version="4.5.0" exclude="Build,Analyzers" />
+      <dependency id="System.Memory" version="4.5.3" exclude="Build,Analyzers" />
+      <dependency id="System.Reactive" version="4.4.1" exclude="Build,Analyzers" />
+      <dependency id="System.Runtime.InteropServices.RuntimeInformation" version="4.3.0" exclude="Build,Analyzers" />
+      <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      <dependency id="System.Drawing.Common" version="4.5.0" exclude="Build,Analyzers" />
+<!--    <dependency id="Avalonia.Unofficial.Cecil" version="20190417.2.0" exclude="Build,Analyzers" />-->
+<!--		<dependency id="System.Runtime.CompilerServices.Unsafe" version="4.5.2" exclude="Build,Analyzers" />-->
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="packages\Avalonia\bin\$configuration$\net461\Avalonia*" target="lib\net461" />
+    <file src="src\Avalonia.Desktop\bin\$configuration$\netstandard2.0\Avalonia.Desktop.*" target="lib\net461" />
+    <file src="src\Avalonia.Controls.DataGrid\bin\$configuration$\netstandard2.0\Avalonia.Controls.DataGrid.*" target="lib\net461" />
+    <file src="src\Skia\Avalonia.Skia\bin\$configuration$\netstandard2.0\Avalonia.Skia.*" target="lib\net461" />
+    <file src="src\Windows\Avalonia.Win32\bin\$configuration$\netstandard2.0\Avalonia.Win32.*" target="lib\net461" />
+    <file src="src\Windows\Avalonia.Win32.Interop\bin\$configuration$\net461\Avalonia.Win32.Interop.*" target="lib\net461" />
+
+    <file src="src\tools\Avalonia.Designer.HostApp\bin\$configuration$\net461\Avalonia.Designer.HostApp.exe" target="tools\net461\designer" />
+    <file src="src\tools\Avalonia.Designer.HostApp\bin\$configuration$\netcoreapp2.0\Avalonia.Designer.HostApp.dll" target="tools\netcoreapp2.0\designer" />
+    <file src="packages\Avalonia\bin\$configuration$\netstandard2.0\Avalonia.Build.Tasks.*" target="tools\netstandard2.0" />
+    <file src="packages\Avalonia\bin\$configuration$\net461\Mono.Cecil.dll" target="tools\netstandard2.0" />
+    <file src="packages\Avalonia\bin\$configuration$\net461\Mono.Cecil.Rocks.dll" target="tools\netstandard2.0" />
+    
+    <file src="packages\Avalonia\Avalonia.props" target="build\JetBrains.Avalonia.props" />
+    <file src="packages\Avalonia\Avalonia.targets" target="build\JetBrains.Avalonia.targets" />
+    <file src="packages\Avalonia\AvaloniaBuildTasks.props" target="build" />
+    <file src="packages\Avalonia\AvaloniaBuildTasks.targets" target="build" />
+  </files>
+</package>
