@@ -29,7 +29,7 @@ namespace Avalonia
             }
             else
             {
-                LoadX11(builder);
+                // LoadX11(builder);
                 LoadSkia(builder);
             }
             return builder;
@@ -42,9 +42,9 @@ namespace Avalonia
             where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
              => builder.UseWin32();
 
-        static void LoadX11<TAppBuilder>(TAppBuilder builder)
-            where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
-             => builder.UseX11();
+        // static void LoadX11<TAppBuilder>(TAppBuilder builder)
+        //     where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
+        //      => builder.UseX11();
 
         static void LoadSkia<TAppBuilder>(TAppBuilder builder)
             where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
