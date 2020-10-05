@@ -41,12 +41,13 @@ namespace ControlCatalog.NetCore
                     return scaling;
                 return 1;
             }
-            if (args.Contains("--fbdev"))
-            {
-                SilenceConsole();
-                return builder.StartLinuxFbDev(args, scaling: GetScaling());
-            }
-            else if (args.Contains("--vnc"))
+            // if (args.Contains("--fbdev"))
+            // {
+            //     SilenceConsole();
+            //     return builder.StartLinuxFbDev(args, scaling: GetScaling());
+            // }
+            // else if (args.Contains("--vnc"))
+            if (args.Contains("--vnc"))
             {
                 return builder.StartWithHeadlessVncPlatform(null, 5901, args, ShutdownMode.OnMainWindowClose);
             }
@@ -92,11 +93,11 @@ namespace ControlCatalog.NetCore
                     })
                     .StartWithClassicDesktopLifetime(args);
             }
-            else if (args.Contains("--drm"))
-            {
-                SilenceConsole();
-                return builder.StartLinuxDrm(args, scaling: GetScaling());
-            }
+            // else if (args.Contains("--drm"))
+            // {
+            //     SilenceConsole();
+            //     return builder.StartLinuxDrm(args, scaling: GetScaling());
+            // }
             else
                 return builder.StartWithClassicDesktopLifetime(args);
         }
@@ -107,11 +108,11 @@ namespace ControlCatalog.NetCore
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .With(new X11PlatformOptions
-                {
-                    EnableMultiTouch = true,
-                    UseDBusMenu = true
-                })
+                // .With(new X11PlatformOptions
+                // {
+                //     EnableMultiTouch = true,
+                //     UseDBusMenu = true
+                // })
                 .With(new Win32PlatformOptions
                 {
                     EnableMultitouch = true,

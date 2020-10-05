@@ -22,22 +22,22 @@ namespace Avalonia
                 LoadWin32(builder);
                 LoadSkia(builder);
             }
-            else if(os==OperatingSystemType.OSX)
-            {
-                LoadAvaloniaNative(builder);
-                LoadSkia(builder);
-            }
-            else
-            {
-                // LoadX11(builder);
-                LoadSkia(builder);
-            }
+            // else if(os==OperatingSystemType.OSX)
+            // {
+            //     LoadAvaloniaNative(builder);
+            //     LoadSkia(builder);
+            // }
+            // else
+            // {
+            //     LoadX11(builder);
+            //     LoadSkia(builder);
+            // }
             return builder;
         }
 
-        static void LoadAvaloniaNative<TAppBuilder>(TAppBuilder builder)
-            where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
-             => builder.UseAvaloniaNative();
+        // static void LoadAvaloniaNative<TAppBuilder>(TAppBuilder builder)
+        //     where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
+        //      => builder.UseAvaloniaNative();
         static void LoadWin32<TAppBuilder>(TAppBuilder builder)
             where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
              => builder.UseWin32();
