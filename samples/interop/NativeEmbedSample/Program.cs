@@ -8,9 +8,9 @@ namespace NativeEmbedSample
 
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
-                .With(new AvaloniaNativePlatformOptions()
-                {
-                })
+                // .With(new AvaloniaNativePlatformOptions()
+                // {
+                // })
                 .UsePlatformDetect();
 
     }
