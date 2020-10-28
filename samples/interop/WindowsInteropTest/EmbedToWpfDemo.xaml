@@ -8,27 +8,6 @@
              xmlns:embedding="clr-namespace:Avalonia.Win32.Embedding;assembly=Avalonia.Win32"
              xmlns:wpf="clr-namespace:Avalonia.Win32.Interop.Wpf;assembly=Avalonia.Win32.Interop"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="400" MinWidth="500" MinHeight="400">
-  <!-- <wpf:WpfAvaloniaHost x:Name="Host"/> -->
-  <DockPanel>
-        <GroupBox DockPanel.Dock="Left" Header="WPF">
-            <StackPanel>
-                <Slider/>
-                <Calendar/>
-            </StackPanel>
-        </GroupBox>
-        <GroupBox Header="Avalonia button" DockPanel.Dock="Bottom">
-            <wpf:WpfAvaloniaHost >
-                <av:Button Content="Avalonia button"/>
-            </wpf:WpfAvaloniaHost>
-        </GroupBox>
-        <GroupBox Header="AvBtn" DockPanel.Dock="Right">
-            <wpf:WpfAvaloniaHost x:Name="RightBtn">
-                <av:Button Content="Avalonia button 2"/>
-            </wpf:WpfAvaloniaHost>
-        </GroupBox>
-        <GroupBox Header="Avalonia">
-            <wpf:WpfAvaloniaHost x:Name="Host"/>
-        </GroupBox>
-    </DockPanel>
+             d:DesignHeight="400" d:DesignWidth="400" Width="800" Height="800">
+    <wpf:WpfAvaloniaHost x:Name="Host"/>
 </Window>

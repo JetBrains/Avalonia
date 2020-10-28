@@ -44,11 +44,6 @@ namespace WindowsInteropTest
                 ((TopLevel) view.GetVisualRoot()).AttachDevTools(); 
             };
             Host.Content = view;
-            var btn = (Avalonia.Controls.Button) RightBtn.Content;
-            btn.Click += delegate
-            {
-                btn.Content += "!";
-            };
         }
     }
     

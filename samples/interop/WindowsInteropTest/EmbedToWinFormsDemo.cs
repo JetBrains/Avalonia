@@ -21,6 +21,9 @@ namespace WindowsInteropTest
             InitializeComponent();
             avaloniaHost.Content = new InteropIssuesPage(this.Handle);
             // avaloniaHost.Content = new MainView();
+
+            Width = 1200;
+            Height = 800;
             
             ((TopLevel)avaloniaHost.Content.GetVisualRoot()).Renderer.Start();
         }
