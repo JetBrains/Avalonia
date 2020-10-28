@@ -28,7 +28,7 @@
         </StackPanel>
       </StackPanel>
 
-      <!-- <Border Grid.Row="1" BorderBrush="Red" BorderThickness="2"> -->
+      <!-- <Border Grid.Row="1" BorderBrush="Yellow" BorderThickness="2"> -->
       <!--   <ListBox -->
       <!--     Items="{Binding ListBox.Items}" -->
       <!--     Selection="{Binding ListBox.Selection}" -->
@@ -50,18 +50,18 @@
       <!--   </ListBox> -->
       <!-- </Border> -->
 
-      <Border Grid.Row="1" BorderBrush="Red" BorderThickness="2">
-        <DataGrid Items="{Binding ListBox.Items}">
-          <DataGrid.Styles>
-            <Style Selector="TextBlock">
-              <Setter Property="Foreground" Value="White"/>
-            </Style>
-          </DataGrid.Styles>
-          <DataGrid.Columns>
-            <DataGridTextColumn Binding="{Binding}" Width="*"/>
-          </DataGrid.Columns>
-        </DataGrid>
-      </Border>
+      <!-- <Border Grid.Row="1" BorderBrush="Red" BorderThickness="2"> -->
+      <!--   <DataGrid Items="{Binding ListBox.Items}"> -->
+      <!--     <DataGrid.Styles> -->
+      <!--       <Style Selector="TextBlock"> -->
+      <!--         <Setter Property="Foreground" Value="White"/> -->
+      <!--       </Style> -->
+      <!--     </DataGrid.Styles> -->
+      <!--     <DataGrid.Columns> -->
+      <!--       <DataGridTextColumn Binding="{Binding}" Width="*"/> -->
+      <!--     </DataGrid.Columns> -->
+      <!--   </DataGrid> -->
+      <!-- </Border> -->
 
     </Grid>
   </Border>
