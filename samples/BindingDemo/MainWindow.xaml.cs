@@ -1,4 +1,4 @@
-using BindingDemo.ViewModels;
+﻿using BindingDemo.ViewModels;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;

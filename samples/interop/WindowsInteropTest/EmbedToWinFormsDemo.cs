@@ -8,7 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Avalonia.Controls;
+using Avalonia.VisualTree;
 using ControlCatalog;
+using ControlCatalog.Pages;
 
 namespace WindowsInteropTest
 {
@@ -17,7 +19,10 @@ namespace WindowsInteropTest
         public EmbedToWinFormsDemo()
         {
             InitializeComponent();
-            avaloniaHost.Content = new MainView();
+            avaloniaHost.Content = new InteropIssuesPage(this.Handle);
+            // avaloniaHost.Content = new MainView();
+            
+            ((TopLevel)avaloniaHost.Content.GetVisualRoot()).Renderer.Start();
         }
     }
 }

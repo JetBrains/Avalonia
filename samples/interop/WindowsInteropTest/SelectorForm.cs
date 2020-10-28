@@ -26,5 +26,10 @@ namespace WindowsInteropTest
         {
             new EmbedToWpfDemo().ShowDialog();
         }
+
+        private void btnEmbedToWpfThroughWinForms_Click(object sender, EventArgs e)
+        {
+            new EmbedToWpfThroughWinFormsDemo().ShowDialog();
+        }
     }
 }

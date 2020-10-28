@@ -30,6 +30,7 @@
         {
             this.btnEmbedToWinForms = new System.Windows.Forms.Button();
             this.btnEmbedToWpf = new System.Windows.Forms.Button();
+            this.btnEmbedToWpfThroughWinForms = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnEmbedToWinForms
@@ -52,13 +53,24 @@
             this.btnEmbedToWpf.UseVisualStyleBackColor = true;
             this.btnEmbedToWpf.Click += new System.EventHandler(this.btnEmbedToWpf_Click);
             // 
+            // btnEmbedToWpfThroughWinForms
+            // 
+            this.btnEmbedToWpfThroughWinForms.Location = new System.Drawing.Point(426, 12);
+            this.btnEmbedToWpfThroughWinForms.Name = "btnEmbedToWpfThroughWinForms";
+            this.btnEmbedToWpfThroughWinForms.Size = new System.Drawing.Size(201, 86);
+            this.btnEmbedToWpfThroughWinForms.TabIndex = 2;
+            this.btnEmbedToWpfThroughWinForms.Text = "Embed to WPF (WinForms)";
+            this.btnEmbedToWpfThroughWinForms.UseVisualStyleBackColor = true;
+            this.btnEmbedToWpfThroughWinForms.Click += new System.EventHandler(this.btnEmbedToWpfThroughWinForms_Click);
+            // 
             // SelectorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(432, 284);
+            this.ClientSize = new System.Drawing.Size(732, 284);
             this.Controls.Add(this.btnEmbedToWpf);
             this.Controls.Add(this.btnEmbedToWinForms);
+            this.Controls.Add(this.btnEmbedToWpfThroughWinForms);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "SelectorForm";
@@ -69,6 +81,7 @@
 
         #endregion
 
+        private System.Windows.Forms.Button btnEmbedToWpfThroughWinForms;
         private System.Windows.Forms.Button btnEmbedToWinForms;
         private System.Windows.Forms.Button btnEmbedToWpf;
     }

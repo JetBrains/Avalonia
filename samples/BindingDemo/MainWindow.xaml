@@ -1,4 +1,4 @@
-<Window xmlns="https://github.com/avaloniaui"
+﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
         x:Class="BindingDemo.MainWindow"
         xmlns:vm="clr-namespace:BindingDemo.ViewModels" 
@@ -22,12 +22,11 @@
         <StackPanel Orientation="Horizontal">
           <StackPanel Margin="18" Spacing="4" Width="200">
             <TextBlock FontSize="16" Text="Simple Bindings"/>
-            <TextBox Watermark="Two Way" UseFloatingWatermark="True" Text="{Binding Path=StringValue}" Name="first"/>
-            <TextBox Watermark="One Way" UseFloatingWatermark="True" Text="{Binding Path=StringValue, Mode=OneWay}"/>
-            <TextBox Watermark="One Time" UseFloatingWatermark="True" Text="{Binding Path=StringValue, Mode=OneTime}"/>
-            <!-- Removed due to #2983: reinstate when that's fixed.
+            <!-- <TextBox Watermark="Two Way" UseFloatingWatermark="True" Text="{Binding Path=StringValue}" Name="first"/> -->
+            <!-- <TextBox Watermark="One Way" UseFloatingWatermark="True" Text="{Binding Path=StringValue, Mode=OneWay}"/> -->
+            <!-- <TextBox Watermark="One Time" UseFloatingWatermark="True" Text="{Binding Path=StringValue, Mode=OneTime}"/> -->
               <TextBox Watermark="One Way to Source" UseFloatingWatermark="True" Text="{Binding Path=StringValue, Mode=OneWayToSource}"/>
-            -->
+        
           </StackPanel>
           <StackPanel Margin="18" Spacing="4" Width="200">
             <TextBlock FontSize="16" Text="Collection Bindings"/>
