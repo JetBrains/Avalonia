@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Logging;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Avalonia.Win32;
 using ControlCatalog.ViewModels;
@@ -49,11 +51,20 @@ namespace ControlCatalog.Pages
         
         public async void OnClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new OpenFileDialog();
-            var result = await dialog.ShowAsync(myMainWindow);
+            (App.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime).MainWindow.Closing+=MainWindowOnClosing;
             
+            (App.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
+            
+   
             // ((BindingPageVm)DataContext).StringValue =
             //     ((BindingPageVm)DataContext).StringValue ?? "" + " click";
+        }
+
+        private void MainWindowOnClosing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true;
+            
+            Dispatcher.UIThread.Post(() => GC.GetTotalMemory(true));
         }
     }
     
