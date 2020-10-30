@@ -2,9 +2,44 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Platform;
+using JetBrains.Annotations;
 
 namespace Avalonia.Threading
 {
+    public interface IDispatcherImpl : IDispatcher
+    {
+        /// <summary>
+        /// Runs the dispatcher's main loop.
+        /// </summary>
+        /// <param name="cancellationToken">
+        /// A cancellation token used to exit the main loop.
+        /// </param>
+        void MainLoop(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Runs continuations pushed on the loop.
+        /// </summary>
+        void RunJobs();
+
+        /// <summary>
+        /// Use this method to ensure that more prioritized tasks are executed
+        /// </summary>
+        /// <param name="minimumPriority"></param>
+        void RunJobs(DispatcherPriority minimumPriority);
+
+        /// <summary>
+        /// This is needed for platform backends that don't have internal priority system (e. g. win32)
+        /// To ensure that there are no jobs with higher priority
+        /// </summary>
+        /// <param name="currentPriority"></param>
+        void EnsurePriority(DispatcherPriority currentPriority);
+
+        /// <summary>
+        /// Allows unit tests to change the platform threading interface.
+        /// </summary>
+        void UpdateServices();
+    }
+
     /// <summary>
     /// Provides services for managing work items on a thread.
     /// </summary>
@@ -14,13 +49,85 @@ namespace Avalonia.Threading
     /// </remarks>
     public class Dispatcher : IDispatcher
     {
+        private IDispatcherImpl _dispatcherImpl;
+
+        public static Dispatcher UIThread { get; } =
+            new Dispatcher(AvaloniaLocator.Current.GetService<IDispatcherImpl>());
+
+        public Dispatcher([NotNull] IDispatcherImpl dispatcherImpl)
+        {
+            _dispatcherImpl = dispatcherImpl ?? throw new ArgumentNullException(nameof(dispatcherImpl));
+        }
+
+        public bool CheckAccess()
+        {
+            return _dispatcherImpl.CheckAccess();
+        }
+
+        public void VerifyAccess()
+        {
+            _dispatcherImpl.VerifyAccess();
+        }
+
+        public void Post(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            _dispatcherImpl.Post(action, priority);
+        }
+
+        public Task InvokeAsync(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            return _dispatcherImpl.InvokeAsync(action, priority);
+        }
+
+        public Task<TResult> InvokeAsync<TResult>(Func<TResult> function, DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            return _dispatcherImpl.InvokeAsync(function, priority);
+        }
+
+        public Task InvokeAsync(Func<Task> function, DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            return _dispatcherImpl.InvokeAsync(function, priority);
+        }
+
+        public Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> function, DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            return _dispatcherImpl.InvokeAsync(function, priority);
+        }
+
+        public void MainLoop(CancellationToken cancellationToken)
+        {
+            _dispatcherImpl.MainLoop(cancellationToken);
+        }
+
+        public void RunJobs()
+        {
+            _dispatcherImpl.RunJobs();
+        }
+
+        public void RunJobs(DispatcherPriority minimumPriority)
+        {
+            _dispatcherImpl.RunJobs(minimumPriority);
+        }
+        
+        public void EnsurePriority(DispatcherPriority currentPriority)
+        {
+            _dispatcherImpl.EnsurePriority(currentPriority);
+        }
+
+        public void UpdateServices()
+        {
+            _dispatcherImpl.UpdateServices();
+        }
+    }
+    public class DispatcherImpl : IDispatcherImpl
+    {
         private readonly JobRunner _jobRunner;
         private IPlatformThreadingInterface _platform;
 
-        public static Dispatcher UIThread { get; } =
-            new Dispatcher(AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>());
+        public static DispatcherImpl UIThread { get; } =
+            new DispatcherImpl(AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>());
 
-        public Dispatcher(IPlatformThreadingInterface platform)
+        public DispatcherImpl(IPlatformThreadingInterface platform)
         {
             _platform = platform;
             _jobRunner = new JobRunner(platform);
@@ -115,7 +222,7 @@ namespace Avalonia.Threading
         /// To ensure that there are no jobs with higher priority
         /// </summary>
         /// <param name="currentPriority"></param>
-        internal void EnsurePriority(DispatcherPriority currentPriority)
+        public void EnsurePriority(DispatcherPriority currentPriority)
         {
             if (currentPriority == DispatcherPriority.MaxValue)
                 return;
@@ -126,7 +233,7 @@ namespace Avalonia.Threading
         /// <summary>
         /// Allows unit tests to change the platform threading interface.
         /// </summary>
-        internal void UpdateServices()
+        public void UpdateServices()
         {
             if (_platform != null)
             {
