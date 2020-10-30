@@ -26,12 +26,13 @@ namespace Avalonia
     public static class Win32ApplicationExtensions
     {
         public static T UseWin32<T>(
-            this T builder) 
+            this T builder, IDispatcherImpl dispatcherImpl = null) 
                 where T : AppBuilderBase<T>, new()
         {
             return builder.UseWindowingSubsystem(
                 () => Win32.Win32Platform.Initialize(
-                    AvaloniaLocator.Current.GetService<Win32PlatformOptions>() ?? new Win32PlatformOptions()),
+                    AvaloniaLocator.Current.GetService<Win32PlatformOptions>() ?? new Win32PlatformOptions(),
+                    dispatcherImpl),
                 "Win32");
         }
     }
