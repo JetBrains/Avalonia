@@ -137,6 +137,7 @@ namespace Avalonia.Win32
                 .Bind<IKeyboardDevice>().ToConstant(WindowsKeyboardDevice.Instance)
                 .Bind<IPlatformSettings>().ToConstant(s_instance)
                 .Bind<IPlatformThreadingInterface>().ToConstant(s_instance)
+                .Bind<IDispatcherImpl>().ToConstant(DispatcherImpl.UIThread)
                 .Bind<IRenderLoop>().ToConstant(new RenderLoop())
                 .Bind<IRenderTimer>().ToConstant(new DefaultRenderTimer(60))
                 .Bind<ISystemDialogImpl>().ToSingleton<SystemDialogImpl>()
