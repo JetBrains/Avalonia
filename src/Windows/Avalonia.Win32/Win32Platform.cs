@@ -24,13 +24,12 @@ namespace Avalonia
     public static class Win32ApplicationExtensions
     {
         public static T UseWin32<T>(
-            this T builder, IDispatcherImpl dispatcherImpl = null) 
+            this T builder) 
                 where T : AppBuilderBase<T>, new()
         {
             return builder.UseWindowingSubsystem(
                 () => Win32.Win32Platform.Initialize(
-                    AvaloniaLocator.Current.GetService<Win32PlatformOptions>() ?? new Win32PlatformOptions(),
-                    dispatcherImpl),
+                    AvaloniaLocator.Current.GetService<Win32PlatformOptions>() ?? new Win32PlatformOptions()),
                 "Win32");
         }
     }
@@ -80,7 +79,7 @@ namespace Avalonia.Win32
             Initialize(new Win32PlatformOptions());
         }
 
-        public static void Initialize(Win32PlatformOptions options, IDispatcherImpl customDispatcher = null)
+        public static void Initialize(Win32PlatformOptions options)
         {
             Options = options;
             AvaloniaLocator.CurrentMutable
@@ -89,7 +88,7 @@ namespace Avalonia.Win32
                 .Bind<IKeyboardDevice>().ToConstant(WindowsKeyboardDevice.Instance)
                 .Bind<IPlatformSettings>().ToConstant(s_instance)
                 .Bind<IPlatformThreadingInterface>().ToConstant(s_instance)
-                .Bind<IDispatcherImpl>().ToConstant(customDispatcher ?? DispatcherImpl.UIThread)
+                .Bind<IDispatcherImpl>().ToConstant(DispatcherImpl.UIThread)
                 .Bind<IRenderLoop>().ToConstant(new RenderLoop())
                 .Bind<IRenderTimer>().ToConstant(new DefaultRenderTimer(60))
                 .Bind<ISystemDialogImpl>().ToSingleton<SystemDialogImpl>()
