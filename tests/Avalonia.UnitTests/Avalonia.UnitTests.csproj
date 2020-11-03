@@ -7,8 +7,7 @@
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>
     <AssemblyOriginatorKeyFile>..\..\build\avalonia.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>false</SignAssembly>
-    <SignAssembly>True</SignAssembly>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Avalonia.UnitTests\Assets\*.ttf" />
