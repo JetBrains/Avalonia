@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Platform;
+using JetBrains.Annotations;
 
 namespace Avalonia.Threading
 {
@@ -14,132 +14,74 @@ namespace Avalonia.Threading
     /// </remarks>
     public class Dispatcher : IDispatcher
     {
-        private readonly JobRunner _jobRunner;
-        private IPlatformThreadingInterface _platform;
+        private IDispatcherImpl _dispatcherImpl;
 
         public static Dispatcher UIThread { get; } =
-            new Dispatcher(AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>());
+            new Dispatcher(AvaloniaLocator.Current.GetService<IDispatcherImpl>());
 
-        public Dispatcher(IPlatformThreadingInterface platform)
+        public Dispatcher([NotNull] IDispatcherImpl dispatcherImpl)
         {
-            _platform = platform;
-            _jobRunner = new JobRunner(platform);
-
-            if (_platform != null)
-            {
-                _platform.Signaled += _jobRunner.RunJobs;
-            }
+            _dispatcherImpl = dispatcherImpl ?? throw new ArgumentNullException(nameof(dispatcherImpl));
         }
 
-        /// <summary>
-        /// Checks that the current thread is the UI thread.
-        /// </summary>
-        public bool CheckAccess() => _platform?.CurrentThreadIsLoopThread ?? true;
+        public bool CheckAccess()
+        {
+            return _dispatcherImpl.CheckAccess();
+        }
 
-        /// <summary>
-        /// Checks that the current thread is the UI thread and throws if not.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">
-        /// The current thread is not the UI thread.
-        /// </exception>
         public void VerifyAccess()
         {
-            if (!CheckAccess())
-                throw new InvalidOperationException("Call from invalid thread");
+            _dispatcherImpl.VerifyAccess();
         }
 
-        /// <summary>
-        /// Runs the dispatcher's main loop.
-        /// </summary>
-        /// <param name="cancellationToken">
-        /// A cancellation token used to exit the main loop.
-        /// </param>
-        public void MainLoop(CancellationToken cancellationToken)
-        {
-            var platform = AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>();
-            cancellationToken.Register(() => platform.Signal(DispatcherPriority.Send));
-            platform.RunLoop(cancellationToken);
-        }
-
-        /// <summary>
-        /// Runs continuations pushed on the loop.
-        /// </summary>
-        public void RunJobs()
-        {
-            _jobRunner.RunJobs(null);
-        }
-
-        /// <summary>
-        /// Use this method to ensure that more prioritized tasks are executed
-        /// </summary>
-        /// <param name="minimumPriority"></param>
-        public void RunJobs(DispatcherPriority minimumPriority) => _jobRunner.RunJobs(minimumPriority);
-
-        /// <inheritdoc/>
-        public Task InvokeAsync(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
-        {
-            Contract.Requires<ArgumentNullException>(action != null);
-            return _jobRunner.InvokeAsync(action, priority);
-        }
-        
-        /// <inheritdoc/>
-        public Task<TResult> InvokeAsync<TResult>(Func<TResult> function, DispatcherPriority priority = DispatcherPriority.Normal)
-        {
-            Contract.Requires<ArgumentNullException>(function != null);
-            return _jobRunner.InvokeAsync(function, priority);
-        }
-
-        /// <inheritdoc/>
-        public Task InvokeAsync(Func<Task> function, DispatcherPriority priority = DispatcherPriority.Normal)
-        {
-            Contract.Requires<ArgumentNullException>(function != null);
-            return _jobRunner.InvokeAsync(function, priority).Unwrap();
-        }
-
-        /// <inheritdoc/>
-        public Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> function, DispatcherPriority priority = DispatcherPriority.Normal)
-        {
-            Contract.Requires<ArgumentNullException>(function != null);
-            return _jobRunner.InvokeAsync(function, priority).Unwrap();
-        }
-
-        /// <inheritdoc/>
         public void Post(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
         {
-            Contract.Requires<ArgumentNullException>(action != null);
-            _jobRunner.Post(action, priority);
+            _dispatcherImpl.Post(action, priority);
         }
 
-        /// <summary>
-        /// This is needed for platform backends that don't have internal priority system (e. g. win32)
-        /// To ensure that there are no jobs with higher priority
-        /// </summary>
-        /// <param name="currentPriority"></param>
-        internal void EnsurePriority(DispatcherPriority currentPriority)
+        public Task InvokeAsync(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
         {
-            if (currentPriority == DispatcherPriority.MaxValue)
-                return;
-            currentPriority += 1;
-            _jobRunner.RunJobs(currentPriority);
+            return _dispatcherImpl.InvokeAsync(action, priority);
         }
 
-        /// <summary>
-        /// Allows unit tests to change the platform threading interface.
-        /// </summary>
-        internal void UpdateServices()
+        public Task<TResult> InvokeAsync<TResult>(Func<TResult> function, DispatcherPriority priority = DispatcherPriority.Normal)
         {
-            if (_platform != null)
-            {
-                _platform.Signaled -= _jobRunner.RunJobs;
-            }
+            return _dispatcherImpl.InvokeAsync(function, priority);
+        }
 
-            _platform = AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>();
-            _jobRunner.UpdateServices();
+        public Task InvokeAsync(Func<Task> function, DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            return _dispatcherImpl.InvokeAsync(function, priority);
+        }
 
-            if (_platform != null)
-            {
-                _platform.Signaled += _jobRunner.RunJobs;
-            }
+        public Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> function, DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            return _dispatcherImpl.InvokeAsync(function, priority);
+        }
+
+        public void MainLoop(CancellationToken cancellationToken)
+        {
+            _dispatcherImpl.MainLoop(cancellationToken);
+        }
+
+        public void RunJobs()
+        {
+            _dispatcherImpl.RunJobs();
+        }
+
+        public void RunJobs(DispatcherPriority minimumPriority)
+        {
+            _dispatcherImpl.RunJobs(minimumPriority);
+        }
+        
+        public void EnsurePriority(DispatcherPriority currentPriority)
+        {
+            _dispatcherImpl.EnsurePriority(currentPriority);
+        }
+
+        public void UpdateServices()
+        {
+            _dispatcherImpl.UpdateServices();
         }
     }
 }
