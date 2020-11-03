@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Platform;
 using JetBrains.Annotations;
 
 namespace Avalonia.Threading
@@ -19,9 +20,14 @@ namespace Avalonia.Threading
         public static Dispatcher UIThread { get; } =
             new Dispatcher(AvaloniaLocator.Current.GetService<IDispatcherImpl>());
 
-        public Dispatcher([NotNull] IDispatcherImpl dispatcherImpl)
+        private Dispatcher([NotNull] IDispatcherImpl dispatcherImpl)
         {
             _dispatcherImpl = dispatcherImpl ?? throw new ArgumentNullException(nameof(dispatcherImpl));
+        }
+
+        public Dispatcher(IPlatformThreadingInterface platform)
+        {
+            _dispatcherImpl = new DispatcherImpl(platform);
         }
 
         public bool CheckAccess()
