@@ -108,7 +108,7 @@ namespace Avalonia.Win32
         private static readonly POINTER_PEN_INFO[] s_historyPenInfos = new POINTER_PEN_INFO[MaxPointerHistorySize];
         private static readonly POINTER_INFO[] s_historyInfos = new POINTER_INFO[MaxPointerHistorySize];
 
-        public WindowImpl()
+        public WindowImpl(IntPtr? hwnd = null)
         {
             _touchDevice = new TouchDevice();
             _mouseDevice = new WindowsMouseDevice();
@@ -143,7 +143,11 @@ namespace Avalonia.Win32
 
             _wmPointerEnabled = Win32Platform.WindowsVersion >= PlatformConstants.Windows8;
 
-            CreateWindow();
+            if (hwnd == null)
+                CreateWindow();
+            else
+                ConnectWindow(hwnd.Value);
+            
             _framebuffer = new FramebufferManager(_hwnd);
             UpdateInputMethod(GetKeyboardLayout(0));
             if (glPlatform != null)
@@ -798,6 +802,10 @@ namespace Avalonia.Win32
                 IntPtr.Zero);
         }
 
+        protected virtual void ConnectWindowOverride(IntPtr hwnd)
+        {
+        }
+
         private void CreateWindow()
         {
             // Ensure that the delegate doesn't get garbage collected by storing it as a field.
@@ -826,7 +834,12 @@ namespace Avalonia.Win32
                 throw new Win32Exception();
             }
 
-            _hwnd = CreateWindowOverride(atom);
+            ConnectWindow(CreateWindowOverride(atom));
+        }
+        
+        private void ConnectWindow(IntPtr hwnd)
+        {
+            _hwnd = hwnd;
 
             if (_hwnd == IntPtr.Zero)
             {
@@ -852,6 +865,8 @@ namespace Avalonia.Win32
                     _scaling = dpix / 96.0;
                 }
             }
+
+            ConnectWindowOverride(hwnd);
         }
 
         private void CreateDropTarget()
