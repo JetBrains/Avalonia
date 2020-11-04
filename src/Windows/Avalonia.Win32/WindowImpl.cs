@@ -82,7 +82,7 @@ namespace Avalonia.Win32
         private WindowImpl _parent;        
         private ExtendClientAreaChromeHints _extendChromeHints = ExtendClientAreaChromeHints.Default;
 
-        public WindowImpl()
+        public WindowImpl(IntPtr? hwnd = null)
         {
             _touchDevice = new TouchDevice();
             _mouseDevice = new WindowsMouseDevice();
@@ -114,7 +114,11 @@ namespace Avalonia.Win32
                     egl.Display is AngleWin32EglDisplay angleDisplay &&
                     angleDisplay.PlatformApi == AngleOptions.PlatformApi.DirectX11;
 
-            CreateWindow();
+            if (hwnd == null)
+                CreateWindow();
+            else
+                ConnectWindow(hwnd.Value);
+            
             _framebuffer = new FramebufferManager(_hwnd);
             
             if (glPlatform != null)
@@ -669,6 +673,10 @@ namespace Avalonia.Win32
                 IntPtr.Zero);
         }
 
+        protected virtual void ConnectWindowOverride(IntPtr hwnd)
+        {
+        }
+
         private void CreateWindow()
         {
             // Ensure that the delegate doesn't get garbage collected by storing it as a field.
@@ -697,7 +705,12 @@ namespace Avalonia.Win32
                 throw new Win32Exception();
             }
 
-            _hwnd = CreateWindowOverride(atom);
+            ConnectWindow(CreateWindowOverride(atom));
+        }
+        
+        private void ConnectWindow(IntPtr hwnd)
+        {
+            _hwnd = hwnd;
 
             if (_hwnd == IntPtr.Zero)
             {
@@ -728,6 +741,8 @@ namespace Avalonia.Win32
                     _scaling = dpix / 96.0;
                 }
             }
+
+            ConnectWindowOverride(hwnd);
         }
 
         private void CreateDropTarget()
