@@ -52,6 +52,11 @@ namespace Avalonia.Win32.Interop.Wpf
                 Renderer?.Resized(clientSize);
             }
 
+            protected override Size MeasureOverride(Size availableSize)
+            {
+                return base.MeasureOverride(ClientSize.Constrain(availableSize));
+            }
+
             public Size AllocatedSize => ClientSize;
         }
 
