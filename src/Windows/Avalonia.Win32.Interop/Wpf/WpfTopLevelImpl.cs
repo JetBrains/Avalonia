@@ -172,9 +172,11 @@ namespace Avalonia.Win32.Interop.Wpf
             return rv;
         }
 
-        void MouseEvent(RawPointerEventType type, MouseEventArgs e)
-            => _ttl.Input?.Invoke(new RawPointerEventArgs(_mouse, (uint)e.Timestamp, _inputRoot, type,
-            e.GetPosition(this).ToAvaloniaPoint(), GetModifiers(e)));
+        void MouseEvent(RawPointerEventType type, MouseEventArgs e) =>
+            InvokeAvaloniaHandler(e,
+                new RawPointerEventArgs(_mouse, (uint)e.Timestamp, _inputRoot, type,
+                    e.GetPosition(this).ToAvaloniaPoint(), GetModifiers(e)),
+                _ttl.Input);
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
@@ -206,29 +208,47 @@ namespace Avalonia.Win32.Interop.Wpf
             Focus();
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
+        protected override void OnMouseMove(MouseEventArgs e) => 
             MouseEvent(RawPointerEventType.Move, e);
-        }
 
         protected override void OnMouseWheel(MouseWheelEventArgs e) =>
-            _ttl.Input?.Invoke(new RawMouseWheelEventArgs(_mouse, (uint) e.Timestamp, _inputRoot,
-                e.GetPosition(this).ToAvaloniaPoint(), new Vector(0, e.Delta), GetModifiers(e)));
+            InvokeAvaloniaHandler(e,
+                new RawMouseWheelEventArgs(_mouse, (uint)e.Timestamp, _inputRoot,
+                    e.GetPosition(this).ToAvaloniaPoint(), new Vector(0, e.Delta), GetModifiers(e)),
+                _ttl.Input);
 
-        protected override void OnMouseLeave(MouseEventArgs e) => MouseEvent(RawPointerEventType.LeaveWindow, e);
+        protected override void OnMouseLeave(MouseEventArgs e) => 
+            MouseEvent(RawPointerEventType.LeaveWindow, e);
 
-        protected override void OnKeyDown(KeyEventArgs e)
-            => _ttl.Input?.Invoke(new RawKeyEventArgs(_keyboard, (uint) e.Timestamp, _inputRoot, RawKeyEventType.KeyDown,
-                (Key) e.Key,
-                GetModifiers(null)));
+        protected override void OnKeyDown(KeyEventArgs e) =>
+            InvokeAvaloniaHandler(e,
+                new RawKeyEventArgs(_keyboard, (uint)e.Timestamp, _inputRoot, RawKeyEventType.KeyDown,
+                    (Key)e.Key,
+                    GetModifiers(null)),
+                _ttl.Input);
 
-        protected override void OnKeyUp(KeyEventArgs e)
-            => _ttl.Input?.Invoke(new RawKeyEventArgs(_keyboard, (uint)e.Timestamp, _inputRoot, RawKeyEventType.KeyUp,
-                (Key)e.Key,
-                GetModifiers(null)));
 
-        protected override void OnTextInput(TextCompositionEventArgs e) 
-            => _ttl.Input?.Invoke(new RawTextInputEventArgs(_keyboard, (uint) e.Timestamp, _inputRoot, e.Text));
+        protected override void OnKeyUp(KeyEventArgs e) =>
+            InvokeAvaloniaHandler(e,
+                new RawKeyEventArgs(_keyboard, (uint)e.Timestamp, _inputRoot, RawKeyEventType.KeyUp,
+                    (Key)e.Key,
+                    GetModifiers(null)),
+                _ttl.Input);
+
+        protected override void OnTextInput(TextCompositionEventArgs e) =>
+            InvokeAvaloniaHandler(e,
+                new RawTextInputEventArgs(_keyboard, (uint)e.Timestamp, _inputRoot, e.Text),
+                _ttl.Input);
+
+        void InvokeAvaloniaHandler(RoutedEventArgs wpfArgs, RawInputEventArgs avaloniaArgs, Action<RawInputEventArgs> action)
+        {
+            if (action == null)
+                return;
+
+            action(avaloniaArgs);
+
+            wpfArgs.Handled = avaloniaArgs.Handled;
+        }
 
         void ITopLevelImpl.SetCursor(IPlatformHandle cursor)
         {
