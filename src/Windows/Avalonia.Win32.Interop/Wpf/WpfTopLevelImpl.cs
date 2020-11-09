@@ -247,7 +247,8 @@ namespace Avalonia.Win32.Interop.Wpf
 
             action(avaloniaArgs);
 
-            wpfArgs.Handled = avaloniaArgs.Handled;
+            if (avaloniaArgs.Handled)
+                wpfArgs.Handled = true;
         }
 
         void ITopLevelImpl.SetCursor(IPlatformHandle cursor)
