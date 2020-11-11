@@ -381,22 +381,27 @@ namespace Avalonia.Controls
 
             if (OwningGrid != null && OwningGrid.ColumnHeaders != null)
             {
-                if (_dragMode == DragMode.MouseDown)
+                switch (_dragMode)
                 {
-                    OnMouseLeftButtonUp_Click(args.KeyModifiers, ref handled);
-                }
-                else if (_dragMode == DragMode.Reorder)
-                {
-                    // Find header we're hovering over
-                    int targetIndex = GetReorderingTargetDisplayIndex(mousePositionHeaders);
-
-                    if (((!OwningColumn.IsFrozen && targetIndex >= OwningGrid.FrozenColumnCount)
-                          || (OwningColumn.IsFrozen && targetIndex < OwningGrid.FrozenColumnCount)))
+                    case DragMode.Drag:
+                    case DragMode.MouseDown:
+                        OnMouseLeftButtonUp_Click(args.KeyModifiers, ref handled);
+                        break;
+                    case DragMode.Reorder:
                     {
-                        OwningColumn.DisplayIndex = targetIndex;
+                        // Find header we're hovering over
+                        int targetIndex = GetReorderingTargetDisplayIndex(mousePositionHeaders);
 
-                        DataGridColumnEventArgs ea = new DataGridColumnEventArgs(OwningColumn);
-                        OwningGrid.OnColumnReordered(ea);
+                        if (((!OwningColumn.IsFrozen && targetIndex >= OwningGrid.FrozenColumnCount)
+                             || (OwningColumn.IsFrozen && targetIndex < OwningGrid.FrozenColumnCount)))
+                        {
+                            OwningColumn.DisplayIndex = targetIndex;
+
+                            DataGridColumnEventArgs ea = new DataGridColumnEventArgs(OwningColumn);
+                            OwningGrid.OnColumnReordered(ea);
+                        }
+
+                        break;
                     }
                 }
 
