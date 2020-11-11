@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Jetbrains.Avalonia.Diagnostics</id>
+    <version>0.10.999</version>
+    <authors>Avalonia</authors>
+    <owners>Avalonia</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://avaloniaui.net/</projectUrl>
+    <iconUrl>https://avatars2.githubusercontent.com/u/14075148?s=200</iconUrl>
+    <description>Avalonia is a WPF/UWP-inspired cross-platform XAML-based UI framework providing a flexible styling system and supporting a wide range of Operating Systems such as Windows (.NET Framework, .NET Core), Linux (via Xorg), MacOS and with experimental support for Android and iOS.</description>
+    <releaseNotes>https://github.com/AvaloniaUI/Avalonia/releases</releaseNotes>
+    <copyright>Copyright 2020 © The AvaloniaUI Project</copyright>
+    <tags>avalonia avaloniaui mvvm rx reactive extensions android ios mac forms wpf net netstandard net461 uwp xamarin</tags>
+    <repository type="git" url="https://github.com/AvaloniaUI/Avalonia/" />
+    <dependencies>
+    <group targetFramework=".NETFramework4.6.1">
+        <dependency id="Microsoft.CodeAnalysis.CSharp.Scripting" version="3.4.0" exclude="Build,Analyzers" />
+        <dependency id="System.Reactive" version="4.4.1" exclude="Build,Analyzers" />
+        <dependency id="Jetbrains.Avalonia" version="0.10.999" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src\Avalonia.Diagnostics\bin\$configuration$\netstandard2.0\Avalonia.Diagnostics.*" target="lib\net461" />
+  </files>
+</package>
