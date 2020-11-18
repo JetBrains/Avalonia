@@ -3757,21 +3757,23 @@ namespace Avalonia.Collections
                 // if the old current item is no longer in view
                 if (newPosition < 0)
                 {
-                    // if we are adding a new item, set it as the current item, otherwise, set it to null
-                    newPosition = 0;
-
-                    if (newPosition < Count)
-                    {
-                        SetCurrent(GetItemAt(newPosition), newPosition);
-                    }
-                    else if (!IsEmpty)
-                    {
-                        SetCurrent(GetItemAt(0), 0);
-                    }
-                    else
-                    {
-                        SetCurrent(null, -1);
-                    }
+                    SetCurrent(null, -1);
+                    
+                    // // if we are adding a new item, set it as the current item, otherwise, set it to null
+                    // newPosition = 0;
+                    //
+                    // if (newPosition < Count)
+                    // {
+                    //     SetCurrent(GetItemAt(newPosition), newPosition);
+                    // }
+                    // else if (!IsEmpty)
+                    // {
+                    //     SetCurrent(GetItemAt(0), 0);
+                    // }
+                    // else
+                    // {
+                    //     SetCurrent(null, -1);
+                    // }
                 }
                 else
                 {
