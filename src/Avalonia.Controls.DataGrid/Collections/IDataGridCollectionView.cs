@@ -66,7 +66,7 @@ namespace Avalonia.Collections
     }
 
     /// <summary>Enables collections to have the functionalities of current record management, custom sorting, filtering, and grouping.</summary>
-    internal interface IDataGridCollectionView : IEnumerable, INotifyCollectionChanged
+    public interface IDataGridCollectionView : IEnumerable, INotifyCollectionChanged
     {
         /// <summary>Gets or sets the cultural information for any operations of the view that may differ by culture, such as sorting.</summary>
         /// <returns>The culture information to use during culture-sensitive operations. </returns>
@@ -172,7 +172,7 @@ namespace Avalonia.Collections
         /// <summary>Occurs after the current item has been changed.</summary>
         event EventHandler CurrentChanged;
     }
-    internal interface IDataGridEditableCollectionView
+    public interface IDataGridEditableCollectionView
     {
         /// <summary>Gets a value that indicates whether a new item can be added to the collection.</summary>
         /// <returns>true if a new item can be added to the collection; otherwise, false.</returns>
