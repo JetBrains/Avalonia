@@ -39,7 +39,7 @@
     <file src="src\Windows\Avalonia.Win32\bin\$configuration$\netstandard2.0\Avalonia.Win32.*" target="lib\net461" />
     <file src="src\Windows\Avalonia.Win32.Interop\bin\$configuration$\net461\Avalonia.Win32.Interop.*" target="lib\net461" />
     <file src="src\Windows\Avalonia.Direct2D1\bin\$configuration$\netstandard2.0\Avalonia.Direct2D1.*" target="lib\net461" />
-    <file src="src\Windows\Avalonia.Direct2D1\bin\$configuration$\netstandard2.0\SharpDX.Direct2D1.*" target="lib\net461" />
+    <file src="src\Windows\Avalonia.Win32.Interop\bin\$configuration$\net461\SharpDX.Direct2D1.*" target="lib\net461" />
 
     <file src="src\tools\Avalonia.Designer.HostApp\bin\$configuration$\net461\Avalonia.Designer.HostApp.exe" target="tools\net461\designer" />
     <file src="src\tools\Avalonia.Designer.HostApp\bin\$configuration$\netcoreapp2.0\Avalonia.Designer.HostApp.dll" target="tools\netcoreapp2.0\designer" />
