@@ -36,7 +36,7 @@
     <file src="src\Avalonia.Desktop\bin\$configuration$\netstandard2.0\Avalonia.Desktop.*" target="lib\net461" />
     <file src="src\Avalonia.Controls.DataGrid\bin\$configuration$\netstandard2.0\Avalonia.Controls.DataGrid.*" target="lib\net461" />
     <file src="src\Skia\Avalonia.Skia\bin\$configuration$\netstandard2.0\Avalonia.Skia.*" target="lib\net461" />
-    <file src="src\Windows\Avalonia.Win32\bin\$configuration$\netstandard2.0\Avalonia.Win32.*" target="lib\net461" />
+    <file src="src\Windows\Avalonia.Win32\bin\$configuration$\net461\Avalonia.Win32.*" target="lib\net461" />
     <file src="src\Windows\Avalonia.Win32.Interop\bin\$configuration$\net461\Avalonia.Win32.Interop.*" target="lib\net461" />
     <file src="src\Windows\Avalonia.Direct2D1\bin\$configuration$\netstandard2.0\Avalonia.Direct2D1.*" target="lib\net461" />
     <file src="src\Windows\Avalonia.Win32.Interop\bin\$configuration$\net461\SharpDX.Direct2D1.*" target="lib\net461" />
