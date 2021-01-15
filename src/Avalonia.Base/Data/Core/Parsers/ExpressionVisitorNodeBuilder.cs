@@ -85,7 +85,7 @@ namespace Avalonia.Data.Core.Parsers
         {
             try
             {
-                return Expression.Lambda<Func<T>>(expr).Compile(preferInterpretation: true)();
+                return Expression.Lambda<Func<T>>(expr).Compile()();
             }
             catch (InvalidOperationException ex)
             {
