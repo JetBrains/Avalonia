@@ -5,6 +5,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives.PopupPositioning;
 using Avalonia.Input;
 using Avalonia.Input.Raw;
+using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Metadata;
 using Avalonia.Platform;
@@ -419,16 +420,20 @@ namespace Avalonia.Controls.Primitives
                         (x, handler) => x.LostFocus += handler,
                         (x, handler) => x.LostFocus -= handler));
             }
-            else
+            else if (topLevel is PopupRoot parentPopupRoot)
             {
-                var parentPopupRoot = topLevel as PopupRoot;
-
-                if (parentPopupRoot?.Parent is Popup popup)
+                if (parentPopupRoot.Parent is Popup popup)
                 {
                     DeferCleanup(SubscribeToEventHandler<Popup, EventHandler<EventArgs>>(popup, ParentClosed,
                         (x, handler) => x.Closed += handler,
                         (x, handler) => x.Closed -= handler));
                 }
+            }
+            else 
+            {
+                DeferCleanup(SubscribeToEventHandler<TopLevel, EventHandler<RoutedEventArgs>>(topLevel, WindowLostFocus,
+                    (x, handler) => x.LostFocus += handler,
+                    (x, handler) => x.LostFocus -= handler));
             }
 
             DeferCleanup(InputManager.Instance?.Process.Subscribe(ListenForNonClientClick));
@@ -751,6 +756,11 @@ namespace Avalonia.Controls.Primitives
             {
                 Close();
             }
+        }
+
+        private void WindowLostFocus(object sender, RoutedEventArgs e)
+        {
+            WindowLostFocus();
         }
         
         private void WindowLostFocus()
