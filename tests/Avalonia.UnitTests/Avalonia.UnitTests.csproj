@@ -7,7 +7,7 @@
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>
     <AssemblyOriginatorKeyFile>..\..\build\avalonia.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>False</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Avalonia.UnitTests\Assets\*.ttf" />
@@ -25,6 +25,7 @@
     <ProjectReference Include="..\..\src\Avalonia.Styling\Avalonia.Styling.csproj" />
     <ProjectReference Include="..\..\src\Avalonia.Themes.Default\Avalonia.Themes.Default.csproj" />
   </ItemGroup>
+  <Import Project="..\..\..\build\System.Memory.props" />
   <Import Project="..\..\src\Shared\PlatformSupport\PlatformSupport.projitems" Label="Shared" />
   <Import Project="..\..\build\Moq.props" />
   <Import Project="..\..\build\Rx.props" />
