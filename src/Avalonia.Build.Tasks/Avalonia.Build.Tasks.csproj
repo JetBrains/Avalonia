@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net461</TargetFrameworks>
-        <TargetFrameworks Condition="$(Configuration) == 'Debug'">netstandard2.0;netcoreapp3.1</TargetFrameworks>
         <OutputType>exe</OutputType>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
@@ -95,4 +94,7 @@
       <PackageReference Include="Mono.Cecil" Version="0.11.2" />
       <PackageReference Include="Microsoft.Build.Framework" Version="15.1.548" PrivateAssets="All" />
     </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
 </Project>
