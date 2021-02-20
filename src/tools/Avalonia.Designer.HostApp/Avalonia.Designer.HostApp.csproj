@@ -27,4 +27,5 @@
     <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.0.2020091801" />
   </ItemGroup>
   <Import Project="..\..\..\build\NetFX.props" />
+  <Import Project="..\..\..\build\System.Memory.props" />
 </Project>
