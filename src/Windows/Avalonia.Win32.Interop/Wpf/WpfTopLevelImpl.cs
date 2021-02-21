@@ -20,6 +20,8 @@ namespace Avalonia.Win32.Interop.Wpf
 {
     class WpfTopLevelImpl : FrameworkElement, ITopLevelImpl
     {
+        private const double WheelDelta = 120.0;
+        
         private HwndSource _currentHwndSource;
         private readonly HwndSourceHook _hook;
         private readonly ITopLevelImpl _ttl;
@@ -215,7 +217,7 @@ namespace Avalonia.Win32.Interop.Wpf
         protected override void OnMouseWheel(MouseWheelEventArgs e) =>
             InvokeAvaloniaHandler(e,
                 new RawMouseWheelEventArgs(_mouse, (uint)e.Timestamp, _inputRoot,
-                    e.GetPosition(this).ToAvaloniaPoint(), new Vector(0, e.Delta), GetModifiers(e)),
+                    e.GetPosition(this).ToAvaloniaPoint(), new Vector(0, e.Delta / WheelDelta), GetModifiers(e)),
                 _ttl.Input);
 
         protected override void OnMouseLeave(MouseEventArgs e) => 
