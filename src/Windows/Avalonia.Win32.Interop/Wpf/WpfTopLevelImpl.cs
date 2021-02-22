@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Embedding;
 using Avalonia.Input;
 using Avalonia.Input.Raw;
@@ -280,7 +281,15 @@ namespace Avalonia.Win32.Interop.Wpf
             return new Vector(src.TransformToDevice.M11, src.TransformToDevice.M22);
         }
 
-        public IPopupImpl CreatePopup() => null;
+        public IPopupImpl CreatePopup()
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } } lifetime)
+            {
+                return new PopupImpl(lifetime.MainWindow.PlatformImpl);
+            }
+
+            return null;
+        }
 
         public void SetTransparencyLevelHint(WindowTransparencyLevel transparencyLevel) { }
 
