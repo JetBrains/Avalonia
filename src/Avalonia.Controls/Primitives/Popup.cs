@@ -4,10 +4,13 @@ using System.Linq;
 using System.Reactive.Disposables;
 using Avalonia.Controls.Mixins;
 using Avalonia.Controls.Diagnostics;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Embedding;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives.PopupPositioning;
 using Avalonia.Input;
 using Avalonia.Input.Raw;
+using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Metadata;
 using Avalonia.Platform;
@@ -423,6 +426,21 @@ namespace Avalonia.Controls.Primitives
                         (x, handler) => x.LostFocus += handler,
                         (x, handler) => x.LostFocus -= handler).DisposeWith(handlerCleanup);
             }
+            else if (topLevel is EmbeddableControlRoot)
+            {
+                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
+                    { MainWindow: { } } lifetime)
+                {
+                    DeferCleanup(SubscribeToEventHandler<Window, EventHandler>(lifetime.MainWindow, WindowDeactivated,
+                        (x, handler) => x.Deactivated += handler,
+                        (x, handler) => x.Deactivated -= handler));
+
+                    DeferCleanup(SubscribeToEventHandler<IWindowImpl, Action>(lifetime.MainWindow.PlatformImpl,
+                        WindowLostFocus,
+                        (x, handler) => x.LostFocus += handler,
+                        (x, handler) => x.LostFocus -= handler));
+                }
+            }
             else
             {
                 var parentPopupRoot = topLevel as PopupRoot;
@@ -772,6 +790,11 @@ namespace Avalonia.Controls.Primitives
         {
             if (IsLightDismissEnabled)
                 Close();
+        }
+
+        private void WindowLostFocus(object sender, RoutedEventArgs e)
+        {
+            WindowLostFocus();
         }
 
         private IgnoreIsOpenScope BeginIgnoringIsOpen()
