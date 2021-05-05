@@ -84,6 +84,8 @@ namespace Avalonia.Win32
         private WindowImpl _parent;        
         private ExtendClientAreaChromeHints _extendChromeHints = ExtendClientAreaChromeHints.Default;
         private bool _isCloseRequested;
+        private bool _shown;
+        private bool _hiddenWindowIsParent;
 
         public WindowImpl(IntPtr? hwnd = null)
         {
@@ -247,7 +249,7 @@ namespace Avalonia.Win32
             {
                 if (IsWindowVisible(_hwnd))
                 {
-                    ShowWindow(value);
+                    ShowWindow(value, true);
                 }
                 else
                 {
@@ -486,8 +488,8 @@ namespace Avalonia.Win32
                     IntPtr.Zero,
                     0,
                     0,
-                    requestedClientWidth + (windowRect.Width - clientRect.Width),
-                    requestedClientHeight + (windowRect.Height - clientRect.Height),
+                    requestedClientWidth + (_isClientAreaExtended ? 0 : windowRect.Width - clientRect.Width),
+                    requestedClientHeight + (_isClientAreaExtended ? 0 : windowRect.Height - clientRect.Height),
                     SetWindowPosFlags.SWP_RESIZE);
             }
         }
@@ -569,12 +571,13 @@ namespace Avalonia.Win32
         public void Hide()
         {
             UnmanagedMethods.ShowWindow(_hwnd, ShowWindowCommand.Hide);
+            _shown = false;
         }
 
-        public virtual void Show()
+        public virtual void Show(bool activate)
         {
-            SetWindowLongPtr(_hwnd, (int)WindowLongParam.GWL_HWNDPARENT, _parent != null ? _parent._hwnd : IntPtr.Zero);
-            ShowWindow(_showWindowState);
+            SetParent(_parent);
+            ShowWindow(_showWindowState, activate);
         }
 
         public Action GotInputWhenDisabled { get; set; }
@@ -582,7 +585,16 @@ namespace Avalonia.Win32
         public void SetParent(IWindowImpl parent)
         {
             _parent = (WindowImpl)parent;
-            SetWindowLongPtr(_hwnd, (int)WindowLongParam.GWL_HWNDPARENT, _parent._hwnd);
+            
+            var parentHwnd = _parent?._hwnd ?? IntPtr.Zero;
+
+            if (parentHwnd == IntPtr.Zero && !_windowProperties.ShowInTaskbar)
+            {
+                parentHwnd = OffscreenParentWindow.Handle;
+                _hiddenWindowIsParent = true;
+            }
+
+            SetWindowLongPtr(_hwnd, (int)WindowLongParam.GWL_HWNDPARENT, parentHwnd);
         }
 
         public void SetEnabled(bool enable) => EnableWindow(_hwnd, enable);
@@ -611,14 +623,19 @@ namespace Avalonia.Win32
             SetWindowText(_hwnd, title);
         }
 
-        public void SetCursor(IPlatformHandle cursor)
+        public void SetCursor(ICursorImpl cursor)
         {
-            var hCursor = cursor?.Handle ?? DefaultCursor;
-            SetClassLong(_hwnd, ClassLongIndex.GCLP_HCURSOR, hCursor);
+            var impl = cursor as CursorImpl;
 
-            if (_owner.IsPointerOver)
+            if (cursor is null || impl is object)
             {
-                UnmanagedMethods.SetCursor(hCursor);
+                var hCursor = impl?.Handle ?? DefaultCursor;
+                SetClassLong(_hwnd, ClassLongIndex.GCLP_HCURSOR, hCursor);
+
+                if (_owner.IsPointerOver)
+                {
+                    UnmanagedMethods.SetCursor(hCursor);
+                }
             }
         }
 
@@ -845,7 +862,7 @@ namespace Avalonia.Win32
             borderCaptionThickness.left *= -1;
             borderCaptionThickness.top *= -1;
 
-            bool wantsTitleBar = _extendChromeHints.HasFlag(ExtendClientAreaChromeHints.SystemChrome) || _extendTitleBarHint == -1;
+            bool wantsTitleBar = _extendChromeHints.HasAllFlags(ExtendClientAreaChromeHints.SystemChrome) || _extendTitleBarHint == -1;
 
             if (!wantsTitleBar)
             {
@@ -862,7 +879,7 @@ namespace Avalonia.Win32
                 borderCaptionThickness.top = (int)(_extendTitleBarHint * RenderScaling);                
             }
 
-            margins.cyTopHeight = _extendChromeHints.HasFlag(ExtendClientAreaChromeHints.SystemChrome) && !_extendChromeHints.HasFlag(ExtendClientAreaChromeHints.PreferSystemChrome) ? borderCaptionThickness.top : 1;
+            margins.cyTopHeight = _extendChromeHints.HasAllFlags(ExtendClientAreaChromeHints.SystemChrome) && !_extendChromeHints.HasAllFlags(ExtendClientAreaChromeHints.PreferSystemChrome) ? borderCaptionThickness.top : 1;
 
             if (WindowState == WindowState.Maximized)
             {
@@ -880,25 +897,29 @@ namespace Avalonia.Win32
 
         private void ExtendClientArea()
         {
+            if (!_shown)
+            {
+                return;
+            }
+            
             if (DwmIsCompositionEnabled(out bool compositionEnabled) < 0 || !compositionEnabled)
             {
                 _isClientAreaExtended = false;
                 return;
             }
-
-            GetWindowRect(_hwnd, out var rcClient);
+            GetClientRect(_hwnd, out var rcClient);
+            GetWindowRect(_hwnd, out var rcWindow);
 
             // Inform the application of the frame change.
             SetWindowPos(_hwnd,
-                         IntPtr.Zero,
-                         rcClient.left, rcClient.top,
-                         rcClient.Width, rcClient.Height,
-                         SetWindowPosFlags.SWP_FRAMECHANGED);
+                IntPtr.Zero,
+                rcWindow.left, rcWindow.top,
+                rcClient.Width, rcClient.Height,
+                SetWindowPosFlags.SWP_FRAMECHANGED);
 
             if (_isClientAreaExtended && WindowState != WindowState.FullScreen)
             {
                 var margins = UpdateExtendMargins();
-
                 DwmExtendFrameIntoClientArea(_hwnd, ref margins);
             }
             else
@@ -908,10 +929,12 @@ namespace Avalonia.Win32
 
                 _offScreenMargin = new Thickness();
                 _extendedMargins = new Thickness();
+                
+                Resize(new Size(rcWindow.Width/ RenderScaling, rcWindow.Height / RenderScaling));
             }
 
-            if(!_isClientAreaExtended || (_extendChromeHints.HasFlag(ExtendClientAreaChromeHints.SystemChrome) &&
-                !_extendChromeHints.HasFlag(ExtendClientAreaChromeHints.PreferSystemChrome)))
+            if(!_isClientAreaExtended || (_extendChromeHints.HasAllFlags(ExtendClientAreaChromeHints.SystemChrome) &&
+                !_extendChromeHints.HasAllFlags(ExtendClientAreaChromeHints.PreferSystemChrome)))
             {
                 EnableCloseButton(_hwnd);
             }
@@ -923,8 +946,15 @@ namespace Avalonia.Win32
             ExtendClientAreaToDecorationsChanged?.Invoke(_isClientAreaExtended);
         }
 
-        private void ShowWindow(WindowState state)
+        private void ShowWindow(WindowState state, bool activate)
         {
+            _shown = true;
+            
+            if (_isClientAreaExtended)
+            {
+                ExtendClientArea();
+            }
+            
             ShowWindowCommand? command;
 
             var newWindowProperties = _windowProperties;
@@ -933,7 +963,7 @@ namespace Avalonia.Win32
             {
                 case WindowState.Minimized:
                     newWindowProperties.IsFullScreen = false;
-                    command = ShowWindowCommand.Minimize;
+                    command = activate ? ShowWindowCommand.Minimize : ShowWindowCommand.ShowMinNoActive;
                     break;
                 case WindowState.Maximized:
                     newWindowProperties.IsFullScreen = false;
@@ -942,7 +972,8 @@ namespace Avalonia.Win32
 
                 case WindowState.Normal:
                     newWindowProperties.IsFullScreen = false;
-                    command = ShowWindowCommand.Restore;
+                    command = IsWindowVisible(_hwnd) ? ShowWindowCommand.Restore : 
+                        activate ? ShowWindowCommand.Normal : ShowWindowCommand.ShowNoActivate;
                     break;
 
                 case WindowState.FullScreen:
@@ -966,7 +997,7 @@ namespace Avalonia.Win32
                 MaximizeWithoutCoveringTaskbar();
             }
 
-            if (!Design.IsDesignMode)
+            if (!Design.IsDesignMode && activate)
             {
                 SetFocus(_hwnd);
             }
@@ -1088,16 +1119,38 @@ namespace Avalonia.Win32
                 if (newProperties.ShowInTaskbar)
                 {
                     exStyle |= WindowStyles.WS_EX_APPWINDOW;
+
+                    if (_hiddenWindowIsParent)
+                    {
+                        // Can't enable the taskbar icon by clearing the parent window unless the window
+                        // is hidden. Hide the window and show it again with the same activation state
+                        // when we've finished. Interestingly it seems to work fine the other way.
+                        var shown = IsWindowVisible(_hwnd);
+                        var activated = GetActiveWindow() == _hwnd;
+
+                        if (shown)
+                            Hide();
+
+                        _hiddenWindowIsParent = false;
+                        SetParent(null);
+
+                        if (shown)
+                            Show(activated);
+                    }
                 }
                 else
                 {
+                    // To hide a non-owned window's taskbar icon we need to parent it to a hidden window.
+                    if (_parent is null)
+                    {
+                        SetWindowLongPtr(_hwnd, (int)WindowLongParam.GWL_HWNDPARENT, OffscreenParentWindow.Handle);
+                        _hiddenWindowIsParent = true;
+                    }
+
                     exStyle &= ~WindowStyles.WS_EX_APPWINDOW;
                 }
 
                 SetExtendedStyle(exStyle);
-
-                // TODO: To hide non-owned window from taskbar we need to parent it to a hidden window.
-                // Otherwise it will still show in the taskbar.
             }
 
             WindowStyles style;
@@ -1247,7 +1300,7 @@ namespace Avalonia.Win32
         public Action<bool> ExtendClientAreaToDecorationsChanged { get; set; }
         
         /// <inheritdoc/>
-        public bool NeedsManagedDecorations => _isClientAreaExtended && _extendChromeHints.HasFlag(ExtendClientAreaChromeHints.PreferSystemChrome);
+        public bool NeedsManagedDecorations => _isClientAreaExtended && _extendChromeHints.HasAllFlags(ExtendClientAreaChromeHints.PreferSystemChrome);
 
         /// <inheritdoc/>
         public Thickness ExtendedMargins => _extendedMargins;

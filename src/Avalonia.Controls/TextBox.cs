@@ -149,6 +149,7 @@ namespace Avalonia.Controls
         private int _selectionStart;
         private int _selectionEnd;
         private TextPresenter _presenter;
+        private TextBoxTextInputMethodClient _imClient = new TextBoxTextInputMethodClient();
         private UndoRedoHelper<UndoRedoState> _undoRedoHelper;
         private bool _isUndoingRedoing;
         private bool _ignoreTextChanges;
@@ -161,6 +162,10 @@ namespace Avalonia.Controls
         static TextBox()
         {
             FocusableProperty.OverrideDefaultValue(typeof(TextBox), true);
+            TextInputMethodClientRequestedEvent.AddClassHandler<TextBox>((tb, e) =>
+            {
+                e.Client = tb._imClient;
+            });
         }
 
         public TextBox()
@@ -170,16 +175,12 @@ namespace Avalonia.Controls
                 this.GetObservable(TextWrappingProperty),
                 (acceptsReturn, wrapping) =>
                 {
-                    if (acceptsReturn)
+                    if (wrapping != TextWrapping.NoWrap)
                     {
-                        return wrapping != TextWrapping.Wrap ?
-                            ScrollBarVisibility.Auto :
-                            ScrollBarVisibility.Disabled;
+                        return ScrollBarVisibility.Disabled;
                     }
-                    else
-                    {
-                        return ScrollBarVisibility.Hidden;
-                    }
+
+                    return acceptsReturn ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden;
                 });
             this.Bind(
                 ScrollViewer.HorizontalScrollBarVisibilityProperty,
@@ -437,7 +438,7 @@ namespace Avalonia.Controls
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             _presenter = e.NameScope.Get<TextPresenter>("PART_TextPresenter");
-
+            _imClient.SetPresenter(_presenter);
             if (IsFocused)
             {
                 _presenter?.ShowCaret();
@@ -487,7 +488,8 @@ namespace Avalonia.Controls
         {
             base.OnLostFocus(e);
 
-            if (ContextMenu == null || !ContextMenu.IsOpen)
+            if ((ContextFlyout == null || !ContextFlyout.IsOpen) &&
+                (ContextMenu == null || !ContextMenu.IsOpen))
             {
                 ClearSelection();
                 RevealPassword = false;
@@ -509,21 +511,36 @@ namespace Avalonia.Controls
 
         private void HandleTextInput(string input)
         {
-            if (!IsReadOnly)
+            if (IsReadOnly)
             {
-                input = RemoveInvalidCharacters(input);
-                string text = Text ?? string.Empty;
-                int caretIndex = CaretIndex;
-                if (!string.IsNullOrEmpty(input) && (MaxLength == 0 || input.Length + text.Length - (Math.Abs(SelectionStart - SelectionEnd)) <= MaxLength))
-                {
-                    DeleteSelection();
-                    caretIndex = CaretIndex;
-                    text = Text ?? string.Empty;
-                    SetTextInternal(text.Substring(0, caretIndex) + input + text.Substring(caretIndex));
-                    CaretIndex += input.Length;
-                    ClearSelection();
-                    _undoRedoHelper.DiscardRedo();
-                }
+                return;
+            }
+            
+            input = RemoveInvalidCharacters(input);
+            
+            if (string.IsNullOrEmpty(input))
+            {
+                return;
+            }
+            
+            string text = Text ?? string.Empty;
+            int caretIndex = CaretIndex;
+            int newLength = input.Length + text.Length - Math.Abs(SelectionStart - SelectionEnd);
+            
+            if (MaxLength > 0 && newLength > MaxLength)
+            {
+                input = input.Remove(Math.Max(0, input.Length - (newLength - MaxLength)));
+            }
+            
+            if (!string.IsNullOrEmpty(input))
+            {
+                DeleteSelection();
+                caretIndex = CaretIndex;
+                text = Text ?? string.Empty;
+                SetTextInternal(text.Substring(0, caretIndex) + input + text.Substring(caretIndex));
+                CaretIndex += input.Length;
+                ClearSelection();
+                _undoRedoHelper.DiscardRedo();
             }
         }
 
@@ -580,7 +597,7 @@ namespace Avalonia.Controls
             var keymap = AvaloniaLocator.Current.GetService<PlatformHotkeyConfiguration>();
 
             bool Match(List<KeyGesture> gestures) => gestures.Any(g => g.Matches(e));
-            bool DetectSelection() => e.KeyModifiers.HasFlag(keymap.SelectionModifiers);
+            bool DetectSelection() => e.KeyModifiers.HasAllFlags(keymap.SelectionModifiers);
 
             if (Match(keymap.SelectAll))
             {
@@ -698,7 +715,7 @@ namespace Avalonia.Controls
             }
             else
             {
-                bool hasWholeWordModifiers = modifiers.HasFlag(keymap.WholeWordTextActionModifiers);
+                bool hasWholeWordModifiers = modifiers.HasAllFlags(keymap.WholeWordTextActionModifiers);
                 switch (e.Key)
                 {
                     case Key.Left:
@@ -867,7 +884,10 @@ namespace Avalonia.Controls
             {
                 var point = e.GetPosition(_presenter);
 
-                point = new Point(MathUtilities.Clamp(point.X, 0, _presenter.Bounds.Width - 1), MathUtilities.Clamp(point.Y, 0, _presenter.Bounds.Height - 1));
+                point = new Point(
+                    MathUtilities.Clamp(point.X, 0, Math.Max(_presenter.Bounds.Width - 1, 0)),
+                    MathUtilities.Clamp(point.Y, 0, Math.Max(_presenter.Bounds.Height - 1, 0)));
+
                 CaretIndex = SelectionEnd = _presenter.GetCaretIndex(point);
             }
         }

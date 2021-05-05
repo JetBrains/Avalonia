@@ -155,13 +155,13 @@ namespace Avalonia.Win32.Interop.Wpf
         {
             var state = Keyboard.Modifiers;
             var rv = default(RawInputModifiers);
-            if (state.HasFlag(ModifierKeys.Windows))
+            if (state.HasAllFlags(ModifierKeys.Windows))
                 rv |= RawInputModifiers.Meta;
-            if (state.HasFlag(ModifierKeys.Alt))
+            if (state.HasAllFlags(ModifierKeys.Alt))
                 rv |= RawInputModifiers.Alt;
-            if (state.HasFlag(ModifierKeys.Control))
+            if (state.HasAllFlags(ModifierKeys.Control))
                 rv |= RawInputModifiers.Control;
-            if (state.HasFlag(ModifierKeys.Shift))
+            if (state.HasAllFlags(ModifierKeys.Shift))
                 rv |= RawInputModifiers.Shift;
             if (e != null)
             {
@@ -254,12 +254,12 @@ namespace Avalonia.Win32.Interop.Wpf
                 wpfArgs.Handled = true;
         }
 
-        void ITopLevelImpl.SetCursor(IPlatformHandle cursor)
+        void ITopLevelImpl.SetCursor(ICursorImpl cursor)
         {
             if (cursor == null)
                 Cursor = Cursors.Arrow;
-            else if (cursor.HandleDescriptor == "HCURSOR")
-                Cursor = CursorShim.FromHCursor(cursor.Handle);
+            else if (cursor is IPlatformHandle handle)
+                Cursor = CursorShim.FromHCursor(handle.Handle);
         }
 
         Action<RawInputEventArgs> ITopLevelImpl.Input { get; set; } //TODO

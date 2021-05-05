@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO; 
 using System.Linq;
+using System.Threading;
+
 using Avalonia.Controls.Platform.Surfaces;
 using Avalonia.Media;
 using Avalonia.OpenGL;
@@ -166,12 +168,13 @@ namespace Avalonia.Skia
             LinearMetrics = true
         };
 
-        private static readonly SKTextBlobBuilder s_textBlobBuilder = new SKTextBlobBuilder();
+        private static readonly ThreadLocal<SKTextBlobBuilder> s_textBlobBuilderThreadLocal = new ThreadLocal<SKTextBlobBuilder>(() => new SKTextBlobBuilder());
 
         /// <inheritdoc />
-        public IGlyphRunImpl CreateGlyphRun(GlyphRun glyphRun, out double width)
+        public IGlyphRunImpl CreateGlyphRun(GlyphRun glyphRun)
         {
             var count = glyphRun.GlyphIndices.Length;
+            var textBlobBuilder = s_textBlobBuilderThreadLocal.Value;
 
             var glyphTypeface = (GlyphTypefaceImpl)glyphRun.GlyphTypeface.PlatformImpl;
 
@@ -180,10 +183,7 @@ namespace Avalonia.Skia
             s_font.Size = (float)glyphRun.FontRenderingEmSize;
             s_font.Typeface = typeface;
 
-
             SKTextBlob textBlob;
-
-            width = 0;
 
             var scale = (float)(glyphRun.FontRenderingEmSize / glyphTypeface.DesignEmHeight);
 
@@ -191,17 +191,17 @@ namespace Avalonia.Skia
             {
                 if (glyphTypeface.IsFixedPitch)
                 {
-                    s_textBlobBuilder.AddRun(glyphRun.GlyphIndices.Buffer.Span, s_font);
+                    textBlobBuilder.AddRun(glyphRun.GlyphIndices.Buffer.Span, s_font);
 
-                    textBlob = s_textBlobBuilder.Build();
-
-                    width = glyphTypeface.GetGlyphAdvance(glyphRun.GlyphIndices[0]) * scale * glyphRun.GlyphIndices.Length;
+                    textBlob = textBlobBuilder.Build();
                 }
                 else
                 {
-                    var buffer = s_textBlobBuilder.AllocateHorizontalRun(s_font, count, 0);
+                    var buffer = textBlobBuilder.AllocateHorizontalRun(s_font, count, 0);
 
                     var positions = buffer.GetPositionSpan();
+
+                    var width = 0d;
 
                     for (var i = 0; i < count; i++)
                     {
@@ -219,12 +219,12 @@ namespace Avalonia.Skia
 
                     buffer.SetGlyphs(glyphRun.GlyphIndices.Buffer.Span);
 
-                    textBlob = s_textBlobBuilder.Build();
+                    textBlob = textBlobBuilder.Build();
                 }
             }
             else
             {
-                var buffer = s_textBlobBuilder.AllocatePositionedRun(s_font, count);
+                var buffer = textBlobBuilder.AllocatePositionedRun(s_font, count);
 
                 var glyphPositions = buffer.GetPositionSpan();
 
@@ -248,13 +248,10 @@ namespace Avalonia.Skia
 
                 buffer.SetGlyphs(glyphRun.GlyphIndices.Buffer.Span);
 
-                width = currentX;
-
-                textBlob = s_textBlobBuilder.Build();
+                textBlob = textBlobBuilder.Build();
             }
 
             return new GlyphRunImpl(textBlob);
-
         }
 
         public IOpenGlBitmapImpl CreateOpenGlBitmap(PixelSize size, Vector dpi)
