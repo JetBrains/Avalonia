@@ -16,7 +16,7 @@
     <tags>avalonia avaloniaui mvvm rx reactive extensions android ios mac forms wpf net netstandard net461 uwp xamarin</tags>
     <repository type="git" url="https://github.com/AvaloniaUI/Avalonia/" />
     <dependencies>
-    <group targetFramework=".NETFramework4.6.1">
+    <group targetFramework=".NETFramework4.7.2">
         <dependency id="Microsoft.CodeAnalysis.CSharp.Scripting" version="3.4.0" exclude="Build,Analyzers" />
         <dependency id="System.Reactive" version="4.4.1" exclude="Build,Analyzers" />
         <dependency id="Jetbrains.Avalonia" version="0.10.999" />
@@ -24,6 +24,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Avalonia.Diagnostics\bin\$configuration$\netstandard2.0\Avalonia.Diagnostics.*" target="lib\net461" />
+    <file src="src\Avalonia.Diagnostics\bin\$configuration$\netstandard2.0\Avalonia.Diagnostics.*" target="lib\net472" />
   </files>
 </package>
