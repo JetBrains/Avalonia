@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using Avalonia.Collections;
 using Avalonia.Data;
 using Avalonia.Logging;
@@ -340,6 +341,7 @@ namespace Avalonia
             {
                 if (e.Sender is T sender)
                 {
+                    Trace.WriteLine($"[AffectsRender] Invalidate: {e.Sender.GetType().Name} {e.Property.Name}");
                     sender.InvalidateVisual();
                 }
             }
