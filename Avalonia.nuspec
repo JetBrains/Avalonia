@@ -43,7 +43,7 @@
     <file src="src\tools\Avalonia.Designer.HostApp\bin\$configuration$\netcoreapp2.0\Avalonia.Designer.HostApp.dll" target="tools\netcoreapp2.0\designer" />
     <file src="packages\Avalonia\bin\$configuration$\netstandard2.0\Avalonia.Build.Tasks.*" target="tools\netstandard2.0" />
     <file src="packages\Avalonia\bin\$configuration$\net472\Mono.Cecil.dll" target="tools\netstandard2.0" />
-    <file src="packages\Avalonia\bin\$configuration$\net461\Mono.Cecil.Rocks.dll" target="tools\netstandard2.0" />
+    <file src="packages\Avalonia\bin\$configuration$\net472\Mono.Cecil.Rocks.dll" target="tools\netstandard2.0" />
     
     <file src="packages\Avalonia\Avalonia.props" target="build\JetBrains.Avalonia.props" />
     <file src="packages\Avalonia\Avalonia.targets" target="build\JetBrains.Avalonia.targets" />
