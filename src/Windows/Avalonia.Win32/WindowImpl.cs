@@ -760,25 +760,38 @@ namespace Avalonia.Win32
                 RegisterTouchWindow(_hwnd, 0);
             }
 
-            if (ShCoreAvailable)
-            {
-                var monitor = MonitorFromWindow(
-                    _hwnd,
-                    MONITOR.MONITOR_DEFAULTTONEAREST);
-
-                if (GetDpiForMonitor(
-                    monitor,
-                    MONITOR_DPI_TYPE.MDT_EFFECTIVE_DPI,
-                    out var dpix,
-                    out var dpiy) == 0)
-                {
-                    _scaling = dpix / 96.0;
-                }
-            }
+            var dpi = GetDpi();
+            _scaling = _scaling = dpi / 96d;
 
             ConnectWindowOverride(hwnd);
         }
 
+        private double GetDpi()
+        {
+            var shcore = LoadLibrary("shcore.dll");
+            if (shcore != IntPtr.Zero)
+            {
+                var monitor = MonitorFromWindow(
+                    _hwnd,
+                    MONITOR.MONITOR_DEFAULTTONEAREST);
+                
+                var method = GetProcAddress(shcore, nameof(GetDpiForMonitor));
+                if (method != IntPtr.Zero)
+                {
+                    GetDpiForMonitor(monitor, MONITOR_DPI_TYPE.MDT_EFFECTIVE_DPI, out var dpiX, out _);
+                    return dpiX;
+                }
+            }
+
+            var hdc = GetDC(IntPtr.Zero);
+
+            double virtW = GetDeviceCaps(hdc, DEVICECAP.HORZRES);
+            double physW = GetDeviceCaps(hdc, DEVICECAP.DESKTOPHORZRES);
+
+            ReleaseDC(IntPtr.Zero, hdc);
+            return (96d * physW / virtW);
+        }
+        
         private void CreateDropTarget()
         {
             var odt = new OleDropTarget(this, _owner);
