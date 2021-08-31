@@ -17,7 +17,7 @@
     <repository type="git" url="https://github.com/AvaloniaUI/Avalonia/" />
     <dependencies>
     <group targetFramework=".NETFramework4.7.2">
-      <dependency id="JetBrains.HarfBuzzSharp" version="2.6.2" exclude="Build,Analyzers" />
+      <dependency id="JetBrains.HarfBuzzSharp" version="2.6.5" exclude="Build,Analyzers" />
       <dependency id="JetBrains.SkiaSharp" version="2.80.6" exclude="Build,Analyzers" />
       <dependency id="JetBrains.Annotations" version="10.3.0" exclude="Build,Analyzers" />
       <dependency id="System.Memory" version="4.5.3" exclude="Build,Analyzers" />
