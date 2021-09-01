@@ -13,6 +13,9 @@ namespace Avalonia.Threading
         public static DispatcherImpl UIThread { get; } =
             new DispatcherImpl(AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>());
 
+        static DispatcherImpl()
+        {}
+
         public DispatcherImpl(IPlatformThreadingInterface platform)
         {
             _platform = platform;
