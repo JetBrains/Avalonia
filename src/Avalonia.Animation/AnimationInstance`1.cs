@@ -36,6 +36,7 @@ namespace Avalonia.Animation
         private IDisposable _timerSub;
         private readonly IClock _baseClock;
         private IClock _clock;
+        private EventHandler<AvaloniaPropertyChangedEventArgs> _propertyChangedDelegate;
 
         public AnimationInstance(Animation animation, Animatable control, Animator<T> animator, IClock baseClock, Action OnComplete, Func<double, T, T> Interpolator)
         {
@@ -45,8 +46,6 @@ namespace Avalonia.Animation
             _onCompleteAction = OnComplete;
             _interpolator = Interpolator;
             _baseClock = baseClock;
-            _neutralValue = (T)_targetControl.GetValue(_animator.Property);
-
             FetchProperties();
         }
 
@@ -80,6 +79,7 @@ namespace Avalonia.Animation
             // Animation may have been stopped before it has finished.
             ApplyFinalFill();
 
+            _targetControl.PropertyChanged -= _propertyChangedDelegate;
             _timerSub?.Dispose();
             _clock.PlayState = PlayState.Stop;
         }
@@ -88,6 +88,9 @@ namespace Avalonia.Animation
         {
             _clock = new Clock(_baseClock);
             _timerSub = _clock.Subscribe(Step);
+            _propertyChangedDelegate ??= ControlPropertyChanged;
+            _targetControl.PropertyChanged += _propertyChangedDelegate;
+            UpdateNeutralValue();
         }
 
         public void Step(TimeSpan frameTick)
@@ -214,6 +217,23 @@ namespace Avalonia.Animation
                     else
                         DoComplete();
                 }
+            }
+        }
+
+        private void UpdateNeutralValue()
+        {
+            var property = _animator.Property;
+            var baseValue = _targetControl.GetBaseValue(property, BindingPriority.LocalValue);
+
+            _neutralValue = baseValue != AvaloniaProperty.UnsetValue ?
+                (T)baseValue : (T)_targetControl.GetValue(property);
+        }
+
+        private void ControlPropertyChanged(object sender, AvaloniaPropertyChangedEventArgs e)
+        {
+            if (e.Property == _animator.Property && e.Priority > BindingPriority.Animation)
+            {
+                UpdateNeutralValue();
             }
         }
     }
