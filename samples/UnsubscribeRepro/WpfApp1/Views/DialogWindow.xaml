@@ -1,0 +1,16 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        x:Class="WpfApp1.Views.DialogWindow">
+
+  <StackPanel Orientation="Vertical">
+    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+    <Button Content="Reset Content and Close"  Click="Button_OnClick"/>
+    <Button Content="Close"  Click="Button2_OnClick"/>
+    
+    <ItemsControl ItemsSource="{Binding Items}"/>
+  </StackPanel>
+
+</Window>

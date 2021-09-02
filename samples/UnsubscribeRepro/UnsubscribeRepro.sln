@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaAppTemplate", "app-mvvm\AvaloniaAppTemplate.csproj", "{07DFAE6B-C701-4E9B-B981-177B71683E10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{CEC687C4-EB9D-453E-A5F2-88648A4FA546}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07DFAE6B-C701-4E9B-B981-177B71683E10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07DFAE6B-C701-4E9B-B981-177B71683E10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07DFAE6B-C701-4E9B-B981-177B71683E10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07DFAE6B-C701-4E9B-B981-177B71683E10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEC687C4-EB9D-453E-A5F2-88648A4FA546}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEC687C4-EB9D-453E-A5F2-88648A4FA546}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEC687C4-EB9D-453E-A5F2-88648A4FA546}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEC687C4-EB9D-453E-A5F2-88648A4FA546}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
