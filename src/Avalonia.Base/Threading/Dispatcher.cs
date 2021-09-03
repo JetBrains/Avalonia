@@ -18,9 +18,6 @@ namespace Avalonia.Threading
         private readonly JobRunner _jobRunner;
         private IPlatformThreadingInterface? _platform;
 
-        public static DispatcherImpl UIThread { get; } =
-            new DispatcherImpl(AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>());
-
         public DispatcherImpl(IPlatformThreadingInterface? platform)
         {
             _platform = platform;
