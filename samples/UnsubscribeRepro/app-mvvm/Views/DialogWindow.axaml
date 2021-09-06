@@ -17,7 +17,7 @@
     <Button Content="Reset Content and Close"  Click="Button_OnClick"/>
     <Button Content="Close"  Click="Button2_OnClick"/>
     
-    <ItemsControl Items="{Binding Items}"/>
+    <!-- <ItemsControl ItemsSource="{Binding Items}"/> -->
   </StackPanel>
 
 </Window>
