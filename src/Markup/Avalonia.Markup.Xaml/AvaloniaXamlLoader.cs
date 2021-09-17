@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -54,7 +55,12 @@ namespace Avalonia.Markup.Xaml
             {
                 var uriString = (!uri.IsAbsoluteUri && baseUri != null ? new Uri(baseUri, uri) : uri)
                     .ToString();
+                Stopwatch stopwatch = Stopwatch.StartNew();
                 var compiledResult = compiledLoader.Invoke(null, new object[] {uriString});
+                stopwatch.Stop();
+                if (stopwatch.ElapsedMilliseconds > 100)
+                    Console.WriteLine("CompiledAvaloniaXaml.!XamlLoader.TryLoad took {0} ms for {1}", stopwatch.ElapsedMilliseconds, uriString);
+
                 if (compiledResult != null)
                     return compiledResult;
             }
