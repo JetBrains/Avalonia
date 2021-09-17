@@ -58,8 +58,7 @@ namespace Avalonia.Markup.Xaml
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 var compiledResult = compiledLoader.Invoke(null, new object[] {uriString});
                 stopwatch.Stop();
-                if (stopwatch.ElapsedMilliseconds > 100)
-                    Console.WriteLine("CompiledAvaloniaXaml.!XamlLoader.TryLoad took {0} ms for {1}", stopwatch.ElapsedMilliseconds, uriString);
+                Console.WriteLine("CompiledAvaloniaXaml.!XamlLoader.TryLoad took {0} ms for {1}", stopwatch.ElapsedMilliseconds, uriString);
 
                 if (compiledResult != null)
                     return compiledResult;
