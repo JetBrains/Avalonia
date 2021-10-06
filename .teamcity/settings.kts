@@ -28,13 +28,19 @@ project {
     buildType(CompileNative)
     buildType(CompileHtmlPreviewer)
     buildType(Compile)
+    buildType(RunLeakTests)
+    buildType(RunDesignerTests)
+    buildType(RunRenderTests)
+    buildType(RunCoreLibsTests)
+    buildType(RunHtmlPreviewerTests)
+    buildType(RunTests)
     buildType(CreateIntermediateNugetPackages)
     buildType(CreateNugetPackages)
     buildType(Package)
     buildType(ZipFiles)
     buildType(CiAzureWindows)
 
-    buildTypesOrder = arrayListOf(GenerateCppHeaders, Clean, CompileNative, CompileHtmlPreviewer, Compile, CreateIntermediateNugetPackages, CreateNugetPackages, Package, ZipFiles, CiAzureWindows)
+    buildTypesOrder = arrayListOf(GenerateCppHeaders, Clean, CompileNative, CompileHtmlPreviewer, Compile, RunLeakTests, RunDesignerTests, RunRenderTests, RunCoreLibsTests, RunHtmlPreviewerTests, RunTests, CreateIntermediateNugetPackages, CreateNugetPackages, Package, ZipFiles, CiAzureWindows)
 
     params {
         text (
@@ -88,7 +94,7 @@ object GenerateCppHeaders : BuildType({
     }
     steps {
         exec {
-            path = "nukebuild/build.cmd"
+            path = "build.cmd"
             arguments = "GenerateCppHeaders --skip"
         }
     }
@@ -101,7 +107,7 @@ object Clean : BuildType({
     }
     steps {
         exec {
-            path = "nukebuild/build.cmd"
+            path = "build.cmd"
             arguments = "Clean --skip"
         }
     }
@@ -114,7 +120,7 @@ object CompileNative : BuildType({
     }
     steps {
         exec {
-            path = "nukebuild/build.cmd"
+            path = "build.cmd"
             arguments = "CompileNative --skip"
         }
     }
@@ -137,7 +143,7 @@ object CompileHtmlPreviewer : BuildType({
     }
     steps {
         exec {
-            path = "nukebuild/build.cmd"
+            path = "build.cmd"
             arguments = "CompileHtmlPreviewer --skip"
         }
     }
@@ -156,7 +162,7 @@ object Compile : BuildType({
     }
     steps {
         exec {
-            path = "nukebuild/build.cmd"
+            path = "build.cmd"
             arguments = "Compile --skip"
         }
     }
@@ -175,6 +181,136 @@ object Compile : BuildType({
         }
     }
 })
+object RunLeakTests : BuildType({
+    name = "RunLeakTests"
+    vcs {
+        root(DslContext.settingsRoot)
+        cleanCheckout = true
+    }
+    steps {
+        exec {
+            path = "build.cmd"
+            arguments = "RunLeakTests --skip"
+        }
+    }
+    dependencies {
+        snapshot(Compile) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+            onDependencyCancel = FailureAction.CANCEL
+        }
+    }
+})
+object RunDesignerTests : BuildType({
+    name = "RunDesignerTests"
+    vcs {
+        root(DslContext.settingsRoot)
+        cleanCheckout = true
+    }
+    steps {
+        exec {
+            path = "build.cmd"
+            arguments = "RunDesignerTests --skip"
+        }
+    }
+    dependencies {
+        snapshot(Compile) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+            onDependencyCancel = FailureAction.CANCEL
+        }
+    }
+})
+object RunRenderTests : BuildType({
+    name = "RunRenderTests"
+    vcs {
+        root(DslContext.settingsRoot)
+        cleanCheckout = true
+    }
+    steps {
+        exec {
+            path = "build.cmd"
+            arguments = "RunRenderTests --skip"
+        }
+    }
+    dependencies {
+        snapshot(Compile) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+            onDependencyCancel = FailureAction.CANCEL
+        }
+    }
+})
+object RunCoreLibsTests : BuildType({
+    name = "RunCoreLibsTests"
+    vcs {
+        root(DslContext.settingsRoot)
+        cleanCheckout = true
+    }
+    steps {
+        exec {
+            path = "build.cmd"
+            arguments = "RunCoreLibsTests --skip"
+        }
+    }
+    dependencies {
+        snapshot(Compile) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+            onDependencyCancel = FailureAction.CANCEL
+        }
+    }
+})
+object RunHtmlPreviewerTests : BuildType({
+    name = "RunHtmlPreviewerTests"
+    vcs {
+        root(DslContext.settingsRoot)
+        cleanCheckout = true
+    }
+    steps {
+        exec {
+            path = "build.cmd"
+            arguments = "RunHtmlPreviewerTests --skip"
+        }
+    }
+    dependencies {
+        snapshot(CompileHtmlPreviewer) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+            onDependencyCancel = FailureAction.CANCEL
+        }
+    }
+})
+object RunTests : BuildType({
+    name = "RunTests"
+    vcs {
+        root(DslContext.settingsRoot)
+        cleanCheckout = true
+    }
+    steps {
+        exec {
+            path = "build.cmd"
+            arguments = "RunTests --skip"
+        }
+    }
+    dependencies {
+        snapshot(RunCoreLibsTests) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+            onDependencyCancel = FailureAction.CANCEL
+        }
+        snapshot(RunRenderTests) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+            onDependencyCancel = FailureAction.CANCEL
+        }
+        snapshot(RunDesignerTests) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+            onDependencyCancel = FailureAction.CANCEL
+        }
+        snapshot(RunHtmlPreviewerTests) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+            onDependencyCancel = FailureAction.CANCEL
+        }
+        snapshot(RunLeakTests) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+            onDependencyCancel = FailureAction.CANCEL
+        }
+    }
+})
 object CreateIntermediateNugetPackages : BuildType({
     name = "CreateIntermediateNugetPackages"
     vcs {
@@ -183,7 +319,7 @@ object CreateIntermediateNugetPackages : BuildType({
     }
     steps {
         exec {
-            path = "nukebuild/build.cmd"
+            path = "build.cmd"
             arguments = "CreateIntermediateNugetPackages --skip"
         }
     }
@@ -202,7 +338,7 @@ object CreateNugetPackages : BuildType({
     }
     steps {
         exec {
-            path = "nukebuild/build.cmd"
+            path = "build.cmd"
             arguments = "CreateNugetPackages --skip"
         }
     }
@@ -221,11 +357,15 @@ object Package : BuildType({
     }
     steps {
         exec {
-            path = "nukebuild/build.cmd"
+            path = "build.cmd"
             arguments = "Package --skip"
         }
     }
     dependencies {
+        snapshot(RunTests) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+            onDependencyCancel = FailureAction.CANCEL
+        }
         snapshot(CreateNugetPackages) {
             onDependencyFailure = FailureAction.FAIL_TO_START
             onDependencyCancel = FailureAction.CANCEL
@@ -240,7 +380,7 @@ object ZipFiles : BuildType({
     }
     steps {
         exec {
-            path = "nukebuild/build.cmd"
+            path = "build.cmd"
             arguments = "ZipFiles --skip"
         }
     }
@@ -254,23 +394,8 @@ object CiAzureWindows : BuildType({
     }
     steps {
         exec {
-            path = "nukebuild/build.cmd"
+            path = "build.cmd"
             arguments = "CiAzureWindows --skip"
-        }
-    }
-    triggers {
-        vcs {
-            triggerRules = "+:**"
-        }
-        schedule {
-            schedulingPolicy = daily {
-                hour = 3
-            }
-            triggerRules = "+:**"
-            triggerBuild = always()
-            withPendingChangesOnly = false
-            enableQueueOptimization = true
-            param("cronExpression_min", "3")
         }
     }
     dependencies {
