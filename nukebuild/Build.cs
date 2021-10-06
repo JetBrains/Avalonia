@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Nuke.Common;
+using Nuke.Common.CI.TeamCity;
 using Nuke.Common.Git;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
@@ -32,6 +33,9 @@ using static Nuke.Common.Tools.VSWhere.VSWhereTasks;
 
  */
 
+[TeamCity(
+    TeamCityAgentPlatform.Windows,
+    ManuallyTriggeredTargets = new[] {nameof(CiAzureWindows)})]
 partial class Build : NukeBuild
 {
     [Solution("Avalonia.sln")] readonly Solution Solution;
