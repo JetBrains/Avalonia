@@ -8,6 +8,7 @@ using Avalonia.Native.Interop;
 using Avalonia.OpenGL;
 using Avalonia.Platform;
 using Avalonia.Rendering;
+using Avalonia.Threading;
 
 namespace Avalonia.Native
 {
@@ -97,9 +98,10 @@ namespace Avalonia.Native
                     macOpts?.DisableDefaultApplicationMenuItems == true ? 1 : 0);
             }
 
+            var threading = new PlatformThreadingInterface(_factory.CreatePlatformThreadingInterface());
             AvaloniaLocator.CurrentMutable
-                .Bind<IPlatformThreadingInterface>()
-                .ToConstant(new PlatformThreadingInterface(_factory.CreatePlatformThreadingInterface()))
+                .Bind<IPlatformThreadingInterface>().ToConstant(threading)
+                .Bind<IDispatcherImpl>().ToConstant(new DispatcherImpl(threading))
                 .Bind<ICursorFactory>().ToConstant(new CursorFactory(_factory.CreateCursorFactory()))
                 .Bind<IPlatformIconLoader>().ToSingleton<IconLoader>()
                 .Bind<IKeyboardDevice>().ToConstant(KeyboardDevice)

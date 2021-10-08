@@ -12,6 +12,7 @@ using Avalonia.OpenGL;
 using Avalonia.OpenGL.Egl;
 using Avalonia.Platform;
 using Avalonia.Rendering;
+using Avalonia.Threading;
 using Avalonia.X11;
 using Avalonia.X11.Glx;
 using Avalonia.X11.NativeDialogs;
@@ -61,12 +62,14 @@ namespace Avalonia.X11
             
             Info = new X11Info(Display, DeferredDisplay, useXim);
             Globals = new X11Globals(this);
+            var threading = new X11PlatformThreading(this);
             //TODO: log
             if (options.UseDBusMenu)
                 DBusHelper.TryInitialize();
             AvaloniaLocator.CurrentMutable.BindToSelf(this)
                 .Bind<IWindowingPlatform>().ToConstant(this)
-                .Bind<IPlatformThreadingInterface>().ToConstant(new X11PlatformThreading(this))
+                .Bind<IPlatformThreadingInterface>().ToConstant(threading)
+                .Bind<IDispatcherImpl>().ToConstant(new DispatcherImpl(threading))
                 .Bind<IRenderTimer>().ToConstant(new SleepLoopRenderTimer(60))
                 .Bind<IRenderLoop>().ToConstant(new RenderLoop())
                 .Bind<PlatformHotkeyConfiguration>().ToConstant(new PlatformHotkeyConfiguration(KeyModifiers.Control))

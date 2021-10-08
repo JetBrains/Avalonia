@@ -50,6 +50,9 @@ namespace Avalonia.Direct2D1.RenderTests
             AvaloniaLocator.CurrentMutable
                 .Bind<IPlatformThreadingInterface>()
                 .ToConstant(threadingInterface);
+            AvaloniaLocator.CurrentMutable
+                .Bind<IDispatcherImpl>()
+                .ToConstant(new DispatcherImpl(threadingInterface));
 
             AvaloniaLocator.CurrentMutable
                 .Bind<IAssetLoader>()

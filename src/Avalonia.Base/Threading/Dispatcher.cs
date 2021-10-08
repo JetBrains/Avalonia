@@ -20,9 +20,12 @@ namespace Avalonia.Threading
         public static Dispatcher UIThread { get; } =
             new Dispatcher(AvaloniaLocator.Current.GetService<IDispatcherImpl>());
 
-        private Dispatcher([NotNull] IDispatcherImpl dispatcherImpl)
+        private Dispatcher([CanBeNull] IDispatcherImpl dispatcherImpl)
         {
-            _dispatcherImpl = dispatcherImpl ?? throw new ArgumentNullException(nameof(dispatcherImpl));
+            // Due to an issue in Avalonia test infrastructure, dispatcherImpl can be null while AvaloniaLocator is initializing.
+            // After AvaloniaLocator is initialized, UpdateServices() will be invoked. 
+            // _dispatcherImpl = dispatcherImpl ?? throw new ArgumentNullException(nameof(dispatcherImpl));
+            _dispatcherImpl = dispatcherImpl;
         }
 
         public Dispatcher(IPlatformThreadingInterface platform)
@@ -32,11 +35,21 @@ namespace Avalonia.Threading
 
         public bool CheckAccess()
         {
+            // Due to an issue in Avalonia test infrastructure, dispatcherImpl can be null while AvaloniaLocator is initializing.
+            // After AvaloniaLocator is initialized, UpdateServices() will be invoked.
+            if (_dispatcherImpl == null)
+                return true;
+            
             return _dispatcherImpl.CheckAccess();
         }
 
         public void VerifyAccess()
         {
+            // Due to an issue in Avalonia test infrastructure, dispatcherImpl can be null while AvaloniaLocator is initializing.
+            // After AvaloniaLocator is initialized, UpdateServices() will be invoked.
+            if (_dispatcherImpl == null)
+                return;
+            
             _dispatcherImpl.VerifyAccess();
         }
 
@@ -87,7 +100,8 @@ namespace Avalonia.Threading
 
         public void UpdateServices()
         {
-            _dispatcherImpl.UpdateServices();
+            _dispatcherImpl = AvaloniaLocator.Current.GetService<IDispatcherImpl>();
+            _dispatcherImpl?.UpdateServices();
         }
     }
 }

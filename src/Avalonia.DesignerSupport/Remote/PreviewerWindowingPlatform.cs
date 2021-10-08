@@ -6,6 +6,7 @@ using Avalonia.Input.Platform;
 using Avalonia.Platform;
 using Avalonia.Remote.Protocol;
 using Avalonia.Rendering;
+using Avalonia.Threading;
 
 namespace Avalonia.DesignerSupport.Remote
 {
@@ -51,6 +52,7 @@ namespace Avalonia.DesignerSupport.Remote
                 .Bind<IKeyboardDevice>().ToConstant(Keyboard)
                 .Bind<IPlatformSettings>().ToConstant(instance)
                 .Bind<IPlatformThreadingInterface>().ToConstant(threading)
+                .Bind<IDispatcherImpl>().ToConstant(new DispatcherImpl(threading))
                 .Bind<IRenderLoop>().ToConstant(new RenderLoop())
                 .Bind<IRenderTimer>().ToConstant(new DefaultRenderTimer(60))
                 .Bind<ISystemDialogImpl>().ToSingleton<SystemDialogsStub>()

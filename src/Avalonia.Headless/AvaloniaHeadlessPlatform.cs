@@ -55,8 +55,10 @@ namespace Avalonia.Headless
         
         internal static void Initialize()
         {
+            var threading = new HeadlessPlatformThreadingInterface();
             AvaloniaLocator.CurrentMutable
-                .Bind<IPlatformThreadingInterface>().ToConstant(new HeadlessPlatformThreadingInterface())
+                .Bind<IPlatformThreadingInterface>().ToConstant(threading)
+                .Bind<IDispatcherImpl>().ToConstant(new DispatcherImpl(threading))
                 .Bind<IClipboard>().ToSingleton<HeadlessClipboardStub>()
                 .Bind<ICursorFactory>().ToSingleton<HeadlessCursorFactoryStub>()
                 .Bind<IPlatformSettings>().ToConstant(new HeadlessPlatformSettingsStub())
