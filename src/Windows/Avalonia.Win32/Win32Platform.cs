@@ -130,7 +130,7 @@ namespace Avalonia.Win32
             Initialize(new Win32PlatformOptions());
         }
 
-        public static void Initialize(Win32PlatformOptions options)
+        public static void Initialize(Win32PlatformOptions options, IDispatcherImpl customDispatcher = null)
         {
             Options = options;
             AvaloniaLocator.CurrentMutable

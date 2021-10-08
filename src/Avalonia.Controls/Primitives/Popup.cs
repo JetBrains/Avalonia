@@ -431,14 +431,14 @@ namespace Avalonia.Controls.Primitives
                 if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
                     { MainWindow: { } } lifetime)
                 {
-                    DeferCleanup(SubscribeToEventHandler<Window, EventHandler>(lifetime.MainWindow, WindowDeactivated,
+                    SubscribeToEventHandler<Window, EventHandler>(lifetime.MainWindow, WindowDeactivated,
                         (x, handler) => x.Deactivated += handler,
-                        (x, handler) => x.Deactivated -= handler));
+                        (x, handler) => x.Deactivated -= handler).DisposeWith(handlerCleanup);
 
-                    DeferCleanup(SubscribeToEventHandler<IWindowImpl, Action>(lifetime.MainWindow.PlatformImpl,
+                    SubscribeToEventHandler<IWindowImpl, Action>(lifetime.MainWindow.PlatformImpl,
                         WindowLostFocus,
                         (x, handler) => x.LostFocus += handler,
-                        (x, handler) => x.LostFocus -= handler));
+                        (x, handler) => x.LostFocus -= handler).DisposeWith(handlerCleanup);
                 }
             }
             else
