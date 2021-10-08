@@ -316,7 +316,7 @@ partial class Build : NukeBuild
         .DependsOn(RunLeakTests);
 
     Target Package => _ => _
-        .DependsOn(RunTests)
+        // .DependsOn(RunTests)
         .DependsOn(CreateNugetPackages);
 
     Target CiAzureLinux => _ => _
