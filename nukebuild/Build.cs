@@ -32,10 +32,6 @@ using static Nuke.Common.Tools.VSWhere.VSWhereTasks;
  VSCode - https://marketplace.visualstudio.com/items?itemName=nuke.support
 
  */
-
-[TeamCity(
-    TeamCityAgentPlatform.Windows,
-    ManuallyTriggeredTargets = new[] {nameof(CiAzureWindows)})]
 partial class Build : NukeBuild
 {
     [Solution("Avalonia.sln")] readonly Solution Solution;
