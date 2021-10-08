@@ -6,6 +6,7 @@
     <IsPackable Condition="'$([MSBuild]::IsOSPlatform(OSX))' == 'True'">true</IsPackable>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageId>JetBrains.Avalonia.Native</PackageId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(PackAvaloniaNative)' == 'true'">

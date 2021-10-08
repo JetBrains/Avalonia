@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
-      <PackageId>Avalonia.Desktop</PackageId>
+      <PackageId>JetBrains.Avalonia.Desktop</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,5 +12,5 @@
       <ProjectReference Include="../Avalonia.X11/Avalonia.X11.csproj" />
   </ItemGroup>
   
-  <Import Project="..\..\build\ApiDiff.props" />  
+<!--  <Import Project="..\..\build\ApiDiff.props" />  -->
 </Project>
