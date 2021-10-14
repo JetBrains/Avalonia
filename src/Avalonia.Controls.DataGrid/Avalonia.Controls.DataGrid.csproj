@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageId>Avalonia.Controls.DataGrid</PackageId>
   </PropertyGroup>
   <ItemGroup>
@@ -19,6 +19,7 @@
     <EmbeddedResource Include="Themes\**\*.xaml"/>
   </ItemGroup>
   <Import Project="..\..\build\Rx.props" />
+  <Import Project="..\..\build\Binding.props" />
   <Import Project="..\..\build\EmbedXaml.props" />
   <Import Project="..\..\build\JetBrains.Annotations.props" />
   <Import Project="..\..\build\BuildTargets.targets" />

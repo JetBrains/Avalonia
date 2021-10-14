@@ -323,12 +323,12 @@ partial class Build : NukeBuild
         .DependsOn(RunTests);
 
     Target CiAzureOSX => _ => _
-        .DependsOn(Package)
-        .DependsOn(ZipFiles);
+        .DependsOn(Package);
+        // .DependsOn(ZipFiles);
 
     Target CiAzureWindows => _ => _
-        .DependsOn(Package)
-        .DependsOn(ZipFiles);
+        .DependsOn(Package);
+        // .DependsOn(ZipFiles);
 
 
     public static int Main() =>

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.Build.Traversal">
   <ItemGroup>
     <ProjectReference Include="src/**/*.*proj" />
-    <ProjectReference Include="samples/**/*.*proj" />
+    <!--<ProjectReference Include="samples/**/*.*proj" />-->
     <ProjectReference Include="tests/**/*.*proj" />
     <ProjectReference Include="packages/**/*.*proj" />
     <ProjectReference Remove="**/*.shproj" />
