@@ -230,9 +230,9 @@ namespace Avalonia.Skia.UnitTests.Media.TextFormatting
                     var glyphClusters = textLine.TextRuns.Cast<ShapedTextCharacters>()
                         .SelectMany(x => x.GlyphRun.GlyphClusters).ToArray();
                 
-                    Assert.True(glyphClusters[0] >= glyphClusters[^1]);
+                    Assert.True(glyphClusters[0] >= glyphClusters[glyphClusters.Length-1]);
                     
-                    Assert.Equal(currentTextSourceIndex, glyphClusters[^1]);
+                    Assert.Equal(currentTextSourceIndex, glyphClusters[glyphClusters.Length-1]);
 
                     currentTextSourceIndex += textLine.TextRange.Length;
                 }

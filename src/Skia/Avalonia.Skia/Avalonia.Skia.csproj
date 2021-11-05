@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <RootNamespace>Avalonia.Skia</RootNamespace>
     <AssemblyName>Avalonia.Skia</AssemblyName>
     <PackageId>JetBrains.Avalonia.Skia</PackageId>
     <IncludeLinuxSkia>true</IncludeLinuxSkia>
+    <IncludeWindowsSkia>true</IncludeWindowsSkia>
+    <IncludeOsxSkia>true</IncludeOsxSkia>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
