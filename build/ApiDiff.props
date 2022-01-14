@@ -1,4 +1,5 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
   <PropertyGroup>
     <ApiContractPackageVersion>0.10.0</ApiContractPackageVersion>
     <NugetPackageName Condition="'$(PackageId)' != ''">$(PackageId)</NugetPackageName>
@@ -9,4 +10,5 @@
     <PackageReference Include="Microsoft.DotNet.ApiCompat" Version="5.0.0-beta.20372.2" PrivateAssets="All" />
     <ResolvedMatchingContract Include="$(NuGetPackageRoot)\$(NugetPackageName.ToLowerInvariant())\$(ApiContractPackageVersion)\lib\$(TargetFramework)\$(AssemblyName).dll" />
   </ItemGroup>
+  -->
 </Project>
