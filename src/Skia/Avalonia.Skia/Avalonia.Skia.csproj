@@ -4,7 +4,7 @@
     <RootNamespace>Avalonia.Skia</RootNamespace>
     <AssemblyName>Avalonia.Skia</AssemblyName>
     <IncludeLinuxSkia>true</IncludeLinuxSkia>
-    <IncludeWasmSkia>true</IncludeWasmSkia>
+    <IncludeWasmSkia>false</IncludeWasmSkia>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
