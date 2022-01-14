@@ -1,5 +1,9 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
+  <PropertyGroup>
+    <DotnetCmd Condition="!Exists('$(SolutionDir)dotnet.cmd')">dotnet</DotnetCmd>
+    <DotnetCmd Condition="Exists('$(SolutionDir)dotnet.cmd')">$(SolutionDir)dotnet.cmd</DotnetCmd>
+  </PropertyGroup>
+  
   <!-- Ensure that code generator is actually built -->
   <ItemGroup>
     <ProjectReference Include="$(MSBuildThisFileDirectory)\..\src\tools\MicroComGenerator\MicroComGenerator.csproj">
@@ -15,7 +19,7 @@
           Inputs="@(AvnComIdl);$(MSBuildThisFileDirectory)../src/tools/MicroComGenerator/**/*.cs"
           Outputs="%(AvnComIdl.OutputFile)">
     <Message Importance="high" Text="Generating file %(AvnComIdl.OutputFile) from @(AvnComIdl)" />
-    <Exec Command="$(SolutionDir)dotnet &quot;$(MSBuildThisFileDirectory)../src/tools/MicroComGenerator/bin/$(Configuration)/net6.0/MicroComGenerator.dll&quot; -i @(AvnComIdl) --cs %(AvnComIdl.OutputFile)" 
+    <Exec Command="$(DotnetCmd) &quot;$(MSBuildThisFileDirectory)../src/tools/MicroComGenerator/bin/$(Configuration)/net6.0/MicroComGenerator.dll&quot; -i @(AvnComIdl) --cs %(AvnComIdl.OutputFile)" 
           LogStandardErrorAsError="true" />
     <ItemGroup>
       <!-- Remove and re-add generated file, this is needed for the clean build -->
