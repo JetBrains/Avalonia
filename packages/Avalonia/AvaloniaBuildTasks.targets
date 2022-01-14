@@ -1,5 +1,10 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <DotnetCmd Condition="!Exists('$(SolutionDir)dotnet.cmd')">dotnet</DotnetCmd>
+    <DotnetCmd Condition="Exists('$(SolutionDir)dotnet.cmd')">$(SolutionDir)dotnet.cmd</DotnetCmd>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <_AvaloniaUseExternalMSBuild>$(AvaloniaUseExternalMSBuild)</_AvaloniaUseExternalMSBuild>
     <_AvaloniaUseExternalMSBuild Condition="'$(_AvaloniaForceInternalMSBuild)' == 'true'">false</_AvaloniaUseExternalMSBuild>
     <AvaloniaXamlReportImportance Condition="'$(AvaloniaXamlReportImportance)' == ''">low</AvaloniaXamlReportImportance>
@@ -75,7 +80,7 @@
       ReportImportance="$(AvaloniaXamlReportImportance)"/>
     <Exec 
       Condition="'$(_AvaloniaUseExternalMSBuild)' == 'true'"
-      Command="$(SolutionDir)dotnet.cmd msbuild /nodereuse:false $(MSBuildProjectFile) /t:GenerateAvaloniaResources /p:_AvaloniaForceInternalMSBuild=true /p:Configuration=$(Configuration) /p:TargetFramework=$(TargetFramework) /p:BuildProjectReferences=false"/>
+      Command="$(DotnetCmd) msbuild /nodereuse:false $(MSBuildProjectFile) /t:GenerateAvaloniaResources /p:_AvaloniaForceInternalMSBuild=true /p:Configuration=$(Configuration) /p:TargetFramework=$(TargetFramework) /p:BuildProjectReferences=false"/>
 
   </Target>
 
@@ -112,7 +117,7 @@
     />
     <Exec
       Condition="'$(_AvaloniaUseExternalMSBuild)' == 'true'"
-      Command="$(SolutionDir)dotnet.cmd msbuild /nodereuse:false $(MSBuildProjectFile) /t:CompileAvaloniaXaml /p:_AvaloniaForceInternalMSBuild=true /p:Configuration=$(Configuration) /p:TargetFramework=$(TargetFramework) /p:BuildProjectReferences=false"/>
+      Command="$(DotnetCmd) msbuild /nodereuse:false $(MSBuildProjectFile) /t:CompileAvaloniaXaml /p:_AvaloniaForceInternalMSBuild=true /p:Configuration=$(Configuration) /p:TargetFramework=$(TargetFramework) /p:BuildProjectReferences=false"/>
   </Target>
 
   
