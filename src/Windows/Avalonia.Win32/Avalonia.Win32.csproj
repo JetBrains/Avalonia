@@ -4,7 +4,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+<!--    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />-->
     <ProjectReference Include="..\..\..\packages\Avalonia\Avalonia.csproj" />
     <PackageReference Include="JetBrains.Avalonia.Angle.Windows.Natives" Version="2.1.0.2020091804" />
     <AvnComIdl Include="WinRT\winrt.idl" OutputFile="WinRT\WinRT.Generated.cs" />
