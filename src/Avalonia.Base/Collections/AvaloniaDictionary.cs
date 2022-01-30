@@ -167,7 +167,7 @@ namespace Avalonia.Collections
         }
 
         /// <inheritdoc/>
-        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value) => _inner.TryGetValue(key, out value);
+        public bool TryGetValue(TKey key, /*[MaybeNullWhen(false)]*/ out TValue value) => _inner.TryGetValue(key, out value);
         /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator() => _inner.GetEnumerator();
 

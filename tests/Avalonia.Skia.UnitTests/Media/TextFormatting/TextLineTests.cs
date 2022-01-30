@@ -164,7 +164,7 @@ namespace Avalonia.Skia.UnitTests.Media.TextFormatting
 
                 Assert.Equal(0, previousCharacterHit.TrailingLength);
 
-                previousCharacterHit = new CharacterHit(clusters[^1], text.Length - clusters[^1]);
+                previousCharacterHit = new CharacterHit(clusters[clusters.Length - 1], text.Length - clusters[clusters.Length - 1]);
 
                 for (var i = clusters.Length - 1; i > 0; i--)
                 {

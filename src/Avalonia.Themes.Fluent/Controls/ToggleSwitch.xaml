@@ -1,6 +1,6 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:sys="clr-namespace:System;assembly=netstandard">
+        xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <Styles.Resources>
     <Thickness x:Key="ToggleSwitchTopHeaderMargin">0,0,0,6</Thickness>
     <GridLength x:Key="ToggleSwitchPreContentMargin">6</GridLength>

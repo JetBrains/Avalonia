@@ -163,7 +163,7 @@ namespace Avalonia.Threading
         public static Dispatcher UIThread { get; } =
             new Dispatcher(AvaloniaLocator.Current.GetService<IDispatcherImpl>());
 
-        private Dispatcher([NotNull] IDispatcherImpl dispatcherImpl)
+        private Dispatcher(IDispatcherImpl? dispatcherImpl)
         {
             _dispatcherImpl = dispatcherImpl ?? throw new ArgumentNullException(nameof(dispatcherImpl));
         }

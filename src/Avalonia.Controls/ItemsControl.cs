@@ -14,6 +14,7 @@ using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Metadata;
 using Avalonia.VisualTree;
+using CollectionChangedEventManager = Avalonia.Controls.Utils.CollectionChangedEventManager;
 
 namespace Avalonia.Controls
 {
