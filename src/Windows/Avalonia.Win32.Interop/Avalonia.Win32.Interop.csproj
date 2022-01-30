@@ -1,6 +1,6 @@
 <Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseWpf>true</UseWpf>
     <ExtrasEnableImplicitWinFormsReferences>true</ExtrasEnableImplicitWinFormsReferences>
@@ -12,7 +12,7 @@
     <ProjectReference Include="..\Avalonia.Direct2D1\Avalonia.Direct2D1.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Avalonia.Win32\Interop\UnmanagedMethods.cs" Link="UnmanagedMethods.cs" />
+<!--    <Compile Include="..\Avalonia.Win32\Interop\UnmanagedMethods.cs" Link="UnmanagedMethods.cs" />-->
   </ItemGroup>
 
   <Import Project="..\..\..\build\SharpDX.props" />

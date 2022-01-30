@@ -8,6 +8,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.VisualTree;
+using Key = Avalonia.Input.Key;
 
 namespace Avalonia.Controls
 {

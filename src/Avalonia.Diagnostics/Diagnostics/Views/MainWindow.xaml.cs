@@ -105,8 +105,11 @@ namespace Avalonia.Diagnostics.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-        private IControl? GetHoveredControl(TopLevel topLevel)
+        private IControl? GetHoveredControl(TopLevel? topLevel)
         {
+            if (topLevel == null)
+                return null;
+            
 #pragma warning disable CS0618 // Type or member is obsolete
             var point = (topLevel as IInputRoot)?.MouseDevice?.GetPosition(topLevel) ?? default;
 #pragma warning restore CS0618 // Type or member is obsolete                
@@ -123,10 +126,12 @@ namespace Avalonia.Diagnostics.Views
                 .FirstOrDefault();
         }
 
-        private static List<PopupRoot> GetPopupRoots(IVisual root)
+        private static List<PopupRoot> GetPopupRoots(IVisual? root)
         {
             var popupRoots = new List<PopupRoot>();
-
+            if (root == null)
+                return popupRoots;
+            
             void ProcessProperty<T>(IControl control, AvaloniaProperty<T> property)
             {
                 if (control.GetValue(property) is IPopupHostProvider popupProvider

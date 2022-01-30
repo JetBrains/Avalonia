@@ -24,7 +24,7 @@ namespace Avalonia.Diagnostics.ViewModels
         private bool _showInactiveStyles;
         private string? _styleStatus;
         private object? _selectedEntity;
-        private readonly Stack<(string Name,object Entry)> _selectedEntitiesStack = new();
+        private readonly Stack<(string? Name,object? Entry)> _selectedEntitiesStack = new();
         private string? _selectedEntityName;
         private string? _selectedEntityType;
 
@@ -425,7 +425,7 @@ namespace Avalonia.Diagnostics.ViewModels
             }
             if (property == null) return;
             _selectedEntitiesStack.Push(new (SelectedEntityName, SelectedEntity));
-            NavigateToProperty(property, SelectedProperty.Name);
+            NavigateToProperty(property, SelectedProperty?.Name);
         }
 
         public void ApplyParentProperty()
@@ -437,8 +437,11 @@ namespace Avalonia.Diagnostics.ViewModels
             }
         }
         
-        protected  void NavigateToProperty(object o, string? entityName)
+        protected  void NavigateToProperty(object? o, string? entityName)
         {
+            if (o == null)
+                return;
+            
             var oldSelectedEntity = SelectedEntity;
             if (oldSelectedEntity is IAvaloniaObject ao1)
             {

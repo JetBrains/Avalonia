@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-      <TargetFrameworks>netstandard2.0;net461;netcoreapp2.0</TargetFrameworks>
+      <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
       <ProjectReference Include="../../src/Avalonia.Remote.Protocol/Avalonia.Remote.Protocol.csproj" />
-      <ProjectReference Include="../../src/Avalonia.Build.Tasks/Avalonia.Build.Tasks.csproj" >
+      <ProjectReference Include="../../src/Avalonia.Build.Tasks/Avalonia.Build.Tasks.csproj">
         <PrivateAssets>all</PrivateAssets>
       </ProjectReference>  
   </ItemGroup>
@@ -39,6 +39,14 @@
     <Content Include="*.targets">
       <Pack>true</Pack>
       <PackagePath>build\;buildTransitive\</PackagePath>
+    </Content>
+    <Content Include="Avalonia.props">
+      <Pack>true</Pack>
+      <PackagePath>build\JetBrains.Avalonia.props;buildTransitive\JetBrains.Avalonia.props</PackagePath>
+    </Content>
+    <Content Include="Avalonia.targets">
+      <Pack>true</Pack>
+      <PackagePath>build\JetBrains.Avalonia.targets;buildTransitive\JetBrains.Avalonia.targets</PackagePath>
     </Content>
     <Content Include="AvaloniaItemSchema.xaml">
       <Pack>true</Pack>

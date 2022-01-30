@@ -170,7 +170,7 @@ namespace Avalonia.Collections
 
             PropertyChangedEventHandler handler = (s, e) =>
             {
-                callback(Tuple.Create(s, e));
+                callback(new Tuple<object?, PropertyChangedEventArgs>(s, e) /*Tuple.Create(s, e)*/);
             };
 
             collection.ForEachItem(
