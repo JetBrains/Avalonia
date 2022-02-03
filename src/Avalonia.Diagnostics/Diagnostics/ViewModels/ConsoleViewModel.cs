@@ -3,8 +3,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia.Collections;
 using Avalonia.Diagnostics.Models;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
+//using Microsoft.CodeAnalysis.CSharp.Scripting;
+//using Microsoft.CodeAnalysis.Scripting;
 
 namespace Avalonia.Diagnostics.ViewModels
 {
@@ -15,7 +15,7 @@ namespace Avalonia.Diagnostics.ViewModels
         private int _historyIndex = -1;
         private string _input;
         private bool _isVisible;
-        private ScriptState<object>? _state;
+        //private ScriptState<object>? _state;
 
         public ConsoleViewModel(Action<ConsoleContext> updateContext)
         {
@@ -47,6 +47,7 @@ namespace Avalonia.Diagnostics.ViewModels
 
             try
             {
+                /*
                 var options = ScriptOptions.Default
                     .AddReferences(Assembly.GetAssembly(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo)));
 
@@ -65,6 +66,7 @@ namespace Avalonia.Diagnostics.ViewModels
                 {
                     History.Add(new ConsoleHistoryItem(Input, _state.ReturnValue ?? "(null)"));
                 }
+                */
             }
             catch (Exception ex)
             {
