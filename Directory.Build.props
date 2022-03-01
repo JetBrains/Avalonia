@@ -5,7 +5,7 @@
       <!-- https://github.com/dotnet/msbuild/issues/2661 -->
       <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
 	  
-	  <PackageId Condition="'$(MSBuildProjectName)' == 'Avalonia.Win32.Interop'">Jetbrains.Avalonia.Win32.Interoperability</PackageId>
-	  <PackageId Condition="'$(MSBuildProjectName)' != 'Avalonia.Win32.Interop'">Jetbrains.$(MSBuildProjectName)</PackageId>
+	  <PackageId Condition="'$(MSBuildProjectName)' == 'Avalonia.Win32.Interop'">JetBrains.Avalonia.Win32.Interoperability</PackageId>
+	  <PackageId Condition="'$(MSBuildProjectName)' != 'Avalonia.Win32.Interop'">JetBrains.$(MSBuildProjectName)</PackageId>
   </PropertyGroup>
 </Project>
