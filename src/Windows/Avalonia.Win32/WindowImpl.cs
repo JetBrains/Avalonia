@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
+using Avalonia.Automation.Peers;
 using Avalonia.Controls.Platform;
 using Avalonia.Input;
 using Avalonia.Input.Raw;
+using Avalonia.Input.TextInput;
 using Avalonia.OpenGL;
 using Avalonia.OpenGL.Angle;
 using Avalonia.OpenGL.Egl;
 using Avalonia.OpenGL.Surfaces;
 using Avalonia.Platform;
 using Avalonia.Rendering;
+using Avalonia.Win32.Automation;
 using Avalonia.Win32.Input;
 using Avalonia.Win32.Interop;
 using Avalonia.Win32.OpenGl;
@@ -25,7 +28,8 @@ namespace Avalonia.Win32
     /// Window implementation for Win32 platform.
     /// </summary>
     public partial class WindowImpl : IWindowImpl, EglGlPlatformSurface.IEglWindowGlPlatformSurfaceInfo,
-        ITopLevelImplWithNativeControlHost
+        ITopLevelImplWithNativeControlHost,
+        ITopLevelImplWithTextInputMethod
     {
         private static readonly List<WindowImpl> s_instances = new List<WindowImpl>();
 
@@ -87,6 +91,8 @@ namespace Avalonia.Win32
         private bool _isCloseRequested;
         private bool _shown;
         private bool _hiddenWindowIsParent;
+        private uint _langid;
+        private bool _ignoreWmChar;
 
         public WindowImpl()
         {
@@ -122,7 +128,7 @@ namespace Avalonia.Win32
 
             CreateWindow();
             _framebuffer = new FramebufferManager(_hwnd);
-            
+            UpdateInputMethod(GetKeyboardLayout(0));
             if (glPlatform != null)
             {
                 if (_isUsingComposition)
@@ -145,7 +151,7 @@ namespace Avalonia.Win32
 
             Screen = new ScreenImpl();
 
-            _nativeControlHost = new Win32NativeControlHost(this);
+            _nativeControlHost = new Win32NativeControlHost(this, _isUsingComposition);
             s_instances.Add(this);
         }
 
@@ -224,7 +230,7 @@ namespace Avalonia.Win32
                     return new Size(rcWindow.Width, rcWindow.Height) / RenderScaling;
                 }
 
-                DwmGetWindowAttribute(_hwnd, (int)DwmWindowAttribute.DWMWA_EXTENDED_FRAME_BOUNDS, out var rect, Marshal.SizeOf(typeof(RECT)));
+                DwmGetWindowAttribute(_hwnd, (int)DwmWindowAttribute.DWMWA_EXTENDED_FRAME_BOUNDS, out var rect, Marshal.SizeOf<RECT>());
                 return new Size(rect.Width, rect.Height) / RenderScaling;
             }
         }
@@ -261,12 +267,10 @@ namespace Avalonia.Win32
             {
                 if (IsWindowVisible(_hwnd))
                 {
-                    ShowWindow(value, true);
+                    ShowWindow(value, value != WindowState.Minimized); // If the window is minimized, it shouldn't be activated
                 }
-                else
-                {
-                    _showWindowState = value;
-                }
+
+                _showWindowState = value;                
             }
         }
 
@@ -335,7 +339,7 @@ namespace Avalonia.Win32
         private WindowTransparencyLevel Win8xEnableBlur(WindowTransparencyLevel transparencyLevel)
         {
             var accent = new AccentPolicy();
-            var accentStructSize = Marshal.SizeOf(accent);
+            var accentStructSize = Marshal.SizeOf<AccentPolicy>();
 
             if (transparencyLevel == WindowTransparencyLevel.AcrylicBlur)
             {
@@ -375,7 +379,13 @@ namespace Avalonia.Win32
         {
             if (_isUsingComposition)
             {
-                _blurHost?.SetBlur(transparencyLevel >= WindowTransparencyLevel.Blur);
+                _blurHost?.SetBlur(transparencyLevel switch
+                {
+                    WindowTransparencyLevel.Mica => BlurEffect.Mica,
+                    WindowTransparencyLevel.AcrylicBlur => BlurEffect.Acrylic,
+                    WindowTransparencyLevel.Blur => BlurEffect.Acrylic,
+                    _ => BlurEffect.None
+                });
 
                 return transparencyLevel;
             }
@@ -384,7 +394,7 @@ namespace Avalonia.Win32
                 bool canUseAcrylic = Win32Platform.WindowsVersion.Major > 10 || Win32Platform.WindowsVersion.Build >= 19628;
 
                 var accent = new AccentPolicy();
-                var accentStructSize = Marshal.SizeOf(accent);
+                var accentStructSize = Marshal.SizeOf<AccentPolicy>();
 
                 if (transparencyLevel == WindowTransparencyLevel.AcrylicBlur && !canUseAcrylic)
                 {
@@ -509,7 +519,7 @@ namespace Avalonia.Win32
 
         public void Activate()
         {
-            SetActiveWindow(_hwnd);
+            SetForegroundWindow(_hwnd);
         }
 
         public IPopupImpl CreatePopup() => Win32Platform.UseOverlayPopups ? null : new PopupImpl(this);
@@ -521,6 +531,7 @@ namespace Avalonia.Win32
             if (_dropTarget != null)
             {
                 OleContext.Current?.UnregisterDragDrop(Handle);
+                _dropTarget.Dispose();
                 _dropTarget = null;
             }
 
@@ -755,7 +766,7 @@ namespace Avalonia.Win32
                 throw new Win32Exception();
             }
 
-            Handle = new PlatformHandle(_hwnd, PlatformConstants.WindowHandleType);
+            Handle = new WindowImplPlatformHandle(this);
 
             _multitouch = Win32Platform.Options.EnableMultitouch ?? true;
 
@@ -965,7 +976,7 @@ namespace Avalonia.Win32
             {
                 case WindowState.Minimized:
                     newWindowProperties.IsFullScreen = false;
-                    command = activate ? ShowWindowCommand.Minimize : ShowWindowCommand.ShowMinNoActive;
+                    command = ShowWindowCommand.Minimize;
                     break;
                 case WindowState.Maximized:
                     newWindowProperties.IsFullScreen = false;
@@ -1002,6 +1013,7 @@ namespace Avalonia.Win32
             if (!Design.IsDesignMode && activate)
             {
                 SetFocus(_hwnd);
+                SetForegroundWindow(_hwnd);
             }
         }
         
@@ -1347,6 +1359,16 @@ namespace Avalonia.Win32
             }
 
             public void Dispose() => _owner._resizeReason = _restore;
+        }
+
+        public ITextInputMethodImpl TextInputMethod => Imm32InputMethod.Current;
+
+        private class WindowImplPlatformHandle : IPlatformHandle
+        {
+            private readonly WindowImpl _owner;
+            public WindowImplPlatformHandle(WindowImpl owner) => _owner = owner;
+            public IntPtr Handle => _owner.Hwnd;
+            public string HandleDescriptor => PlatformConstants.WindowHandleType;
         }
     }
 }
