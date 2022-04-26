@@ -170,7 +170,7 @@ namespace Avalonia.Threading
         public static Dispatcher UIThread { get; } =
             new Dispatcher(AvaloniaLocator.Current.GetService<IDispatcherImpl>());
 
-        private Dispatcher([NotNull] IDispatcherImpl dispatcherImpl)
+        private Dispatcher(IDispatcherImpl? dispatcherImpl)
         {
             _dispatcherImpl = dispatcherImpl ?? throw new ArgumentNullException(nameof(dispatcherImpl));
         }
@@ -213,6 +213,11 @@ namespace Avalonia.Threading
         public Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> function, DispatcherPriority priority = DispatcherPriority.Normal)
         {
             return _dispatcherImpl.InvokeAsync(function, priority);
+        }
+        
+        public bool HasJobsWithPriority(DispatcherPriority minimumPriority)
+        {
+            return _dispatcherImpl.HasJobsWithPriority(minimumPriority);
         }
 
         public void MainLoop(CancellationToken cancellationToken)
@@ -273,5 +278,11 @@ namespace Avalonia.Threading
         /// Allows unit tests to change the platform threading interface.
         /// </summary>
         void UpdateServices();
+        
+        /// <summary>
+        /// Use this method to check if there are more prioritized tasks
+        /// </summary>
+        /// <param name="minimumPriority"></param>
+        bool HasJobsWithPriority(DispatcherPriority minimumPriority);
     }
 }
