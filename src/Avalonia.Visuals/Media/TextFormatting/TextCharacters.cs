@@ -63,7 +63,7 @@ namespace Avalonia.Media.TextFormatting
             {
                 return new ShapeableTextCharacters(text.Take(count),
                     new GenericTextRunProperties(currentTypeface, defaultProperties.FontRenderingEmSize,
-                        defaultProperties.TextDecorations, defaultProperties.ForegroundBrush));
+                        defaultProperties.TextDecorations, defaultProperties.ForegroundBrush, defaultProperties.BackgroundBrush));
 
             }
 
@@ -79,7 +79,7 @@ namespace Avalonia.Media.TextFormatting
                 //Fallback found
                 return new ShapeableTextCharacters(text.Take(count),
                     new GenericTextRunProperties(currentTypeface, defaultProperties.FontRenderingEmSize,
-                    defaultProperties.TextDecorations, defaultProperties.ForegroundBrush));
+                    defaultProperties.TextDecorations, defaultProperties.ForegroundBrush, defaultProperties.BackgroundBrush));
             }
 
             // no fallback found
@@ -103,7 +103,7 @@ namespace Avalonia.Media.TextFormatting
 
             return new ShapeableTextCharacters(text.Take(count),
                 new GenericTextRunProperties(currentTypeface, defaultProperties.FontRenderingEmSize,
-                    defaultProperties.TextDecorations, defaultProperties.ForegroundBrush));
+                    defaultProperties.TextDecorations, defaultProperties.ForegroundBrush, defaultProperties.BackgroundBrush));
         }
 
         /// <summary>
