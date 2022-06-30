@@ -23,8 +23,6 @@ namespace Avalonia.Rendering
         private int _inTick;
         private int _inUpdate;
 
-        static RenderLoop() { } // cctor is defined to prevent RenderLoop to be marked with beforeFieldInit flag due to Dispatcher.UIThread in ctor
-
         /// <summary>
         /// Initializes a new instance of the <see cref="RenderLoop"/> class.
         /// </summary>

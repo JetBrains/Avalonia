@@ -170,6 +170,8 @@ namespace Avalonia.Threading
         public static Dispatcher UIThread { get; } =
             new Dispatcher(AvaloniaLocator.Current.GetService<IDispatcherImpl>());
 
+        static Dispatcher() { } // cctor is defined to prevent Dispatcher to be marked with beforeFieldInit flag
+
         private Dispatcher(IDispatcherImpl? dispatcherImpl)
         {
             _dispatcherImpl = dispatcherImpl ?? throw new ArgumentNullException(nameof(dispatcherImpl));
