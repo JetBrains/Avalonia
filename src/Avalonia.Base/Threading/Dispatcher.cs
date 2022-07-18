@@ -167,9 +167,11 @@ namespace Avalonia.Threading
     {
         private IDispatcherImpl _dispatcherImpl;
 
-        public static Dispatcher UIThread { get; } =
-            new Dispatcher(AvaloniaLocator.Current.GetService<IDispatcherImpl>());
+        private static readonly Lazy<Dispatcher> _uiThread =
+            new (() => new Dispatcher(AvaloniaLocator.Current.GetService<IDispatcherImpl>()));
 
+        public static Dispatcher UIThread => _uiThread.Value;
+            
         private Dispatcher(IDispatcherImpl? dispatcherImpl)
         {
             _dispatcherImpl = dispatcherImpl ?? throw new ArgumentNullException(nameof(dispatcherImpl));
