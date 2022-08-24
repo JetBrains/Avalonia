@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Platform;
+using JetBrains.Annotations;
 
 namespace Avalonia.Threading
 {
@@ -12,15 +13,12 @@ namespace Avalonia.Threading
     /// In Avalonia, there is usually only a single <see cref="Dispatcher"/> in the application -
     /// the one for the UI thread, retrieved via the <see cref="UIThread"/> property.
     /// </remarks>
-    public class Dispatcher : IDispatcher
+    public class DispatcherImpl : IDispatcherImpl
     {
         private readonly JobRunner _jobRunner;
         private IPlatformThreadingInterface? _platform;
 
-        public static Dispatcher UIThread { get; } =
-            new Dispatcher(AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>());
-
-        public Dispatcher(IPlatformThreadingInterface? platform)
+        public DispatcherImpl(IPlatformThreadingInterface? platform)
         {
             _platform = platform;
             _jobRunner = new JobRunner(platform);
@@ -155,5 +153,132 @@ namespace Avalonia.Threading
                 _platform.Signaled += _jobRunner.RunJobs;
             }
         }
+
+        void IDispatcherImpl.EnsurePriority(DispatcherPriority currentPriority) => EnsurePriority(currentPriority);
+
+        void IDispatcherImpl.UpdateServices() => UpdateServices();
+    }
+    
+    /// <summary>
+    /// Provides services for managing work items on a thread.
+    /// </summary>
+    /// <remarks>
+    /// In Avalonia, there is usually only a single <see cref="Dispatcher"/> in the application -
+    /// the one for the UI thread, retrieved via the <see cref="UIThread"/> property.
+    /// </remarks>
+    public class Dispatcher : IDispatcher
+    {
+        private IDispatcherImpl _dispatcherImpl;
+
+        private static readonly Lazy<Dispatcher> _uiThread =
+            new (() => new Dispatcher(AvaloniaLocator.Current.GetService<IDispatcherImpl>()));
+
+        public static Dispatcher UIThread => _uiThread.Value;
+        
+        private Dispatcher([NotNull] IDispatcherImpl dispatcherImpl) =>
+            _dispatcherImpl = dispatcherImpl ?? throw new ArgumentNullException(nameof(dispatcherImpl));
+
+        public Dispatcher(IPlatformThreadingInterface platform) =>
+            _dispatcherImpl = new DispatcherImpl(platform);
+
+        public bool CheckAccess() =>
+            _dispatcherImpl.CheckAccess();
+
+        public void VerifyAccess() =>
+            _dispatcherImpl.VerifyAccess();
+
+        public void MainLoop(CancellationToken cancellationToken) =>
+            _dispatcherImpl.MainLoop(cancellationToken);
+
+        public void RunJobs() =>
+            _dispatcherImpl.RunJobs();
+        
+        public void RunJobs(DispatcherPriority minimumPriority) =>
+            _dispatcherImpl.RunJobs(minimumPriority);
+        
+        public bool HasJobsWithPriority(DispatcherPriority minimumPriority) =>
+            _dispatcherImpl.HasJobsWithPriority(minimumPriority);
+
+        public Task InvokeAsync(Action action, DispatcherPriority priority = default) =>
+            _dispatcherImpl.InvokeAsync(action, priority);
+
+        public Task<TResult> InvokeAsync<TResult>(Func<TResult> function, DispatcherPriority priority = default) =>
+            _dispatcherImpl.InvokeAsync(function, priority);
+        
+        public Task InvokeAsync(Func<Task> function, DispatcherPriority priority = default) =>
+            _dispatcherImpl.InvokeAsync(function, priority);
+        
+        public Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> function, DispatcherPriority priority = default) =>
+            _dispatcherImpl.InvokeAsync(function, priority);
+
+        public void Post(Action action, DispatcherPriority priority = default) =>
+            _dispatcherImpl.Post(action, priority);
+
+        public void Post(SendOrPostCallback action, object? arg, DispatcherPriority priority = default) =>
+            _dispatcherImpl.Post(action, arg, priority);
+        
+        public void EnsurePriority(DispatcherPriority currentPriority) =>
+            _dispatcherImpl.EnsurePriority(currentPriority);
+
+        public void UpdateServices() =>
+            _dispatcherImpl.UpdateServices();
+    }
+    
+    public interface IDispatcherImpl : IDispatcher
+    {
+        /// <summary>
+        /// Runs the dispatcher's main loop.
+        /// </summary>
+        /// <param name="cancellationToken">
+        /// A cancellation token used to exit the main loop.
+        /// </param>
+        void MainLoop(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Runs continuations pushed on the loop.
+        /// </summary>
+        void RunJobs();
+
+        /// <summary>
+        /// Use this method to ensure that more prioritized tasks are executed
+        /// </summary>
+        /// <param name="minimumPriority"></param>
+        void RunJobs(DispatcherPriority minimumPriority);
+
+        /// <summary>
+        /// This is needed for platform backends that don't have internal priority system (e. g. win32)
+        /// To ensure that there are no jobs with higher priority
+        /// </summary>
+        /// <param name="currentPriority"></param>
+        void EnsurePriority(DispatcherPriority currentPriority);
+
+        /// <summary>
+        /// Allows unit tests to change the platform threading interface.
+        /// </summary>
+        void UpdateServices();
+
+        /// <summary>
+        /// Use this method to check if there are more prioritized tasks
+        /// </summary>
+        /// <param name="minimumPriority"></param>
+        bool HasJobsWithPriority(DispatcherPriority minimumPriority);
+
+        /// <summary>
+        /// Queues the specified work to run on the dispatcher thread and returns a proxy for the
+        /// task returned by <paramref name="function"/>.
+        /// </summary>
+        /// <param name="function">The work to execute asynchronously.</param>
+        /// <param name="priority">The priority with which to invoke the method.</param>
+        /// <returns>A task that represents a proxy for the task returned by <paramref name="function"/>.</returns>
+        Task<TResult> InvokeAsync<TResult>(Func<TResult> function, DispatcherPriority priority = default);
+
+        /// <summary>
+        /// Queues the specified work to run on the dispatcher thread and returns a proxy for the
+        /// task returned by <paramref name="function"/>.
+        /// </summary>
+        /// <param name="function">The work to execute asynchronously.</param>
+        /// <param name="priority">The priority with which to invoke the method.</param>
+        /// <returns>A task that represents a proxy for the task returned by <paramref name="function"/>.</returns>
+        Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> function, DispatcherPriority priority = default);
     }
 }
