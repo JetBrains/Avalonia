@@ -19,7 +19,15 @@ namespace Avalonia.Diagnostics.ViewModels
         public abstract string? Value { get; set; }
         public abstract string Priority { get; }
         public abstract bool? IsAttached { get;  }
-        public abstract void Update();        
+        public abstract void Update();
+
+        public string TypeName => Type.Name;
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.PropertyName == nameof(Type)) 
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TypeName)));
+        }
 
         protected static string? ConvertToString(object? value)
         {
