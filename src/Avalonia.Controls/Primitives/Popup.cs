@@ -2,7 +2,9 @@ using System;
 using System.ComponentModel;
 using Avalonia.Reactive;
 using Avalonia.Automation.Peers;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Diagnostics;
+using Avalonia.Controls.Embedding;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives.PopupPositioning;
 using Avalonia.Input;
@@ -430,6 +432,24 @@ namespace Avalonia.Controls.Primitives
                         SubscribeToEventHandler<Layoutable, EventHandler>(layoutTarget, PlacementTargetLayoutUpdated,
                             (x, handler) => x.LayoutUpdated += handler,
                             (x, handler) => x.LayoutUpdated -= handler).DisposeWith(handlerCleanup);
+                    }
+                }
+            }
+            else if (topLevel is EmbeddableControlRoot)
+            {
+                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
+                        { MainWindow: { } } lifetime)
+                {
+                    SubscribeToEventHandler<Window, EventHandler>(lifetime.MainWindow, WindowDeactivated,
+                        (x, handler) => x.Deactivated += handler,
+                        (x, handler) => x.Deactivated -= handler).DisposeWith(handlerCleanup);
+
+                    if (lifetime.MainWindow.PlatformImpl != null)
+                    {
+                        SubscribeToEventHandler<IWindowImpl, Action>(lifetime.MainWindow.PlatformImpl,
+                            WindowLostFocus,
+                            (x, handler) => x.LostFocus += handler,
+                            (x, handler) => x.LostFocus -= handler).DisposeWith(handlerCleanup);
                     }
                 }
             }
