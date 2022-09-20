@@ -121,10 +121,14 @@ namespace Avalonia.Win32.WinRT.Composition
         private void RunLoop()
         {
             {
+                var cts = new CancellationTokenSource();
+                AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
+                    cts.Cancel();
+                
                 var st = Stopwatch.StartNew();
                 using (var act = _compositor5.RequestCommitAsync())
                     act.SetCompleted(new RunLoopHandler(this));
-                while (true)
+                while (!cts.IsCancellationRequested)
                 {
                     UnmanagedMethods.GetMessage(out var msg, IntPtr.Zero, 0, 0);
                     lock (_pumpLock)
