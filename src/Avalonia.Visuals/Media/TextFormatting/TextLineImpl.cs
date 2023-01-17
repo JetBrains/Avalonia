@@ -41,7 +41,7 @@ namespace Avalonia.Media.TextFormatting
             {
                 var offsetY = LineMetrics.TextBaseline - textRun.GlyphRun.BaselineOrigin.Y;
 
-                using (drawingContext.PushPostTransform(Matrix.CreateTranslation(currentX, offsetY)))
+                using (drawingContext.PushPreTransform(Matrix.CreateTranslation(currentX, offsetY)))
                 {
                     textRun.Draw(drawingContext);
                 }
