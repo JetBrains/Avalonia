@@ -129,7 +129,7 @@ namespace Avalonia.Media.TextFormatting
                 var offsetX = TextLine.GetParagraphOffsetX(textLine.LineMetrics.Size.Width, Size.Width,
                     _paragraphProperties.TextAlignment);
 
-                using (context.PushPostTransform(Matrix.CreateTranslation(offsetX, currentY)))
+                using (context.PushPreTransform(Matrix.CreateTranslation(offsetX, currentY)))
                 {
                     textLine.Draw(context);
                 }
