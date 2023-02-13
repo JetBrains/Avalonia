@@ -172,6 +172,8 @@ namespace Avalonia.Native
 
             void IAvnWindowBaseEvents.Closed()
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 var n = _parent._native;
                 try
                 {
@@ -183,64 +185,104 @@ namespace Avalonia.Native
                     _parent.Dispose();
                     n?.Dispose();
                 }
+                });
             }
 
-            void IAvnWindowBaseEvents.Activated() => _parent.Activated?.Invoke();
+            void IAvnWindowBaseEvents.Activated()
+            {
+                PlatformExceptionHandler.Catch(() =>
+                {
+                    _parent.Activated?.Invoke();
+                });
+            }
 
-            void IAvnWindowBaseEvents.Deactivated() => _parent.Deactivated?.Invoke();
+            void IAvnWindowBaseEvents.Deactivated()
+            {
+                PlatformExceptionHandler.Catch(() =>
+                {
+                    _parent.Deactivated?.Invoke();
+                });
+            }
 
             void IAvnWindowBaseEvents.Paint()
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
                 var s = _parent.ClientSize;
                 _parent.Paint?.Invoke(new Rect(0, 0, s.Width, s.Height));
+                });
             }
 
             void IAvnWindowBaseEvents.Resized(AvnSize* size, AvnPlatformResizeReason reason)
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 if (_parent._native != null)
                 {
                     var s = new Size(size->Width, size->Height);
                     _parent._savedLogicalSize = s;
                     _parent.Resized?.Invoke(s, (PlatformResizeReason)reason);
                 }
+                });
             }
 
             void IAvnWindowBaseEvents.PositionChanged(AvnPoint position)
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 _parent.PositionChanged?.Invoke(position.ToAvaloniaPixelPoint());
+                });
             }
 
             void IAvnWindowBaseEvents.RawMouseEvent(AvnRawMouseEventType type, ulong timeStamp, AvnInputModifiers modifiers, AvnPoint point, AvnVector delta)
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 _parent.RawMouseEvent(type, timeStamp, modifiers, point, delta);
+                });
             }
 
             int IAvnWindowBaseEvents.RawKeyEvent(AvnRawKeyEventType type, ulong timeStamp, AvnInputModifiers modifiers, uint key)
             {
+                return PlatformExceptionHandler.Catch(() =>
+                {
                 return _parent.RawKeyEvent(type, timeStamp, modifiers, key).AsComBool();
+                });
             }
 
             int IAvnWindowBaseEvents.RawTextInputEvent(ulong timeStamp, string text)
             {
+                return PlatformExceptionHandler.Catch(() =>
+                {
                 return _parent.RawTextInputEvent(timeStamp, text).AsComBool();
+                });
             }
 
 
             void IAvnWindowBaseEvents.ScalingChanged(double scaling)
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 _parent._savedScaling = scaling;
                 _parent.ScalingChanged?.Invoke(scaling);
+                });
             }
 
             void IAvnWindowBaseEvents.RunRenderPriorityJobs()
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
+                });
             }
             
             void IAvnWindowBaseEvents.LostFocus()
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 _parent.LostFocus?.Invoke();
+                });
             }
 
             public AvnDragDropEffects DragEvent(AvnDragEventType type, AvnPoint position,
@@ -248,6 +290,8 @@ namespace Avalonia.Native
                 AvnDragDropEffects effects,
                 IAvnClipboard clipboard, IntPtr dataObjectHandle)
             {
+                return PlatformExceptionHandler.Catch(() =>
+                {
                 var device = AvaloniaLocator.Current.GetService<IDragDropDevice>();
 
                 if (device != null && _parent._inputRoot != null)
@@ -270,6 +314,7 @@ namespace Avalonia.Native
                 }
 
                 return AvnDragDropEffects.None;
+                });
             }
         }
 

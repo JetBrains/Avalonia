@@ -12,7 +12,10 @@ namespace Avalonia.Native
         
         void IAvnApplicationEvents.FilesOpened(IAvnStringArray urls)
         {
+            PlatformExceptionHandler.Catch(() =>
+            {
             ((IApplicationPlatformEvents)Application.Current).RaiseUrlsOpened(urls.ToStringArray());
+            });
         }
 
         public int TryShutdown()
