@@ -178,7 +178,7 @@ namespace Avalonia.Threading
             {
                 if (_taskCompletionSource == null)
                 {
-                    _action();
+                    PlatformExceptionHandler.Catch(_action);
                     return;
                 }
                 try

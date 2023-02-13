@@ -129,7 +129,9 @@ namespace Avalonia.Threading
 
             timer.Tick += (s, e) =>
             {
-                if (!action())
+                var result = false;
+                PlatformExceptionHandler.Catch(() => result = action());
+                if (!result)
                 {
                     timer.Stop();
                 }
@@ -160,7 +162,7 @@ namespace Avalonia.Threading
 
             timer.Tick += (s, e) =>
             {
-                action();
+                PlatformExceptionHandler.Catch(action);
                 timer.Stop();
             };
 

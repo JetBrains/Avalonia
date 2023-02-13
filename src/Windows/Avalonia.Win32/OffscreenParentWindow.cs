@@ -11,7 +11,7 @@ namespace Avalonia.Win32
         private static UnmanagedMethods.WndProc s_wndProcDelegate;
         private static IntPtr CreateParentWindow()
         {
-            s_wndProcDelegate = new UnmanagedMethods.WndProc(ParentWndProc);
+            s_wndProcDelegate = SafeWndProc.WndProc(ParentWndProc);
 
             var wndClassEx = new UnmanagedMethods.WNDCLASSEX
             {

@@ -18,17 +18,26 @@ namespace Avalonia.Native.Interop
 
         public void NeedsUpdate()
         {
+            Platform.PlatformExceptionHandler.Catch(() =>
+            {
             _parent?.RaiseNeedsUpdate();
+            });
         }
 
         public void Opening()
         {
+            Platform.PlatformExceptionHandler.Catch(() =>
+            {
             _parent?.RaiseOpening();
+            });
         }
 
         public void Closed()
         {
+            Platform.PlatformExceptionHandler.Catch(() =>
+            {
             _parent?.RaiseClosed();
+            });
         }
     }
 

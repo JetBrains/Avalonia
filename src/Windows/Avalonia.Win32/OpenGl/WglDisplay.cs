@@ -10,7 +10,7 @@ namespace Avalonia.Win32.OpenGl
     {
         private static bool? _initialized;
         private static ushort _windowClass;
-        private static readonly WndProc _wndProcDelegate = WndProc;
+        private static readonly WndProc _wndProcDelegate = SafeWndProc.WndProc(WndProc);
         private static readonly DebugCallbackDelegate _debugCallback = DebugCallback;
 
         private static IntPtr _bootstrapContext;

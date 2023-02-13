@@ -22,6 +22,19 @@ using static Avalonia.Win32.Interop.UnmanagedMethods;
 
 namespace Avalonia
 {
+    internal static class SafeWndProc
+    {
+        public static WndProc WndProc(WndProc wndProc) => 
+            (hWnd, msg, wParam, lParam) =>
+            {
+                var result = IntPtr.Zero;
+                return PlatformExceptionHandler.Catch(() =>
+                {
+                    result = wndProc(hWnd, msg, wParam, lParam);
+                }) ? result : DefWindowProc(hWnd, msg, wParam, lParam);
+            };
+    }
+    
     public static class Win32ApplicationExtensions
     {
         public static T UseWin32<T>(
@@ -219,7 +232,7 @@ namespace Avalonia.Win32
         public IDisposable StartTimer(DispatcherPriority priority, TimeSpan interval, Action callback)
         {
             UnmanagedMethods.TimerProc timerDelegate =
-                (hWnd, uMsg, nIDEvent, dwTime) => callback();
+                (hWnd, uMsg, nIDEvent, dwTime) => PlatformExceptionHandler.Catch(callback);
 
             IntPtr handle = UnmanagedMethods.SetTimer(
                 IntPtr.Zero,
@@ -286,7 +299,7 @@ namespace Avalonia.Win32
         private void CreateMessageWindow()
         {
             // Ensure that the delegate doesn't get garbage collected by storing it as a field.
-            _wndProcDelegate = new UnmanagedMethods.WndProc(WndProc);
+            _wndProcDelegate = SafeWndProc.WndProc(WndProc);
 
             UnmanagedMethods.WNDCLASSEX wndClassEx = new UnmanagedMethods.WNDCLASSEX
             {
