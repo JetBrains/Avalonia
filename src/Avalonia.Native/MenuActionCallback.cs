@@ -14,7 +14,10 @@ namespace Avalonia.Native
 
         void IAvnActionCallback.Run()
         {
+            Platform.PlatformExceptionHandler.Catch(() =>
+            {
             _action?.Invoke();
+            });
         }
     }
 }

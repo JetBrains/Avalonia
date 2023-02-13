@@ -191,7 +191,10 @@ namespace Avalonia.X11
                 _signaledPriority = DispatcherPriority.MinValue;
             }
 
+            PlatformExceptionHandler.Catch(() =>
+            {
             Signaled?.Invoke(prio);
+            });
         }
 
         unsafe void HandleX11(CancellationToken cancellationToken)
@@ -200,9 +203,12 @@ namespace Avalonia.X11
             {
                 if (cancellationToken.IsCancellationRequested)
                     return;
+                
+                void Handler()
+                {
                 XNextEvent(_display, out var xev);
                 if(XFilterEvent(ref xev, IntPtr.Zero))
-                    continue;
+                    return;
 
                 X11Tools.OnXEvent(this, (IntPtr)(&xev));
                 
@@ -219,16 +225,23 @@ namespace Avalonia.X11
                         }
                     }
                     else if (_eventHandlers.TryGetValue(xev.AnyEvent.window, out var handler))
+                    {
                         handler(ref xev);
+                    }
                 }
                 finally
                 {
                     if (xev.type == XEventName.GenericEvent && xev.GenericEventCookie.data != null)
                         XFreeEventData(_display, &xev.GenericEventCookie);
                 }
+                }
+                PlatformExceptionHandler.Catch(Handler);
             }
 
+            PlatformExceptionHandler.Catch(() =>
+            {
             Dispatcher.UIThread.RunJobs();
+            });
         }
         
         public void RunLoop(CancellationToken cancellationToken)
@@ -254,7 +267,10 @@ namespace Avalonia.X11
                 {
                     if (cancellationToken.IsCancellationRequested)
                         return;
+                    PlatformExceptionHandler.Catch(() =>
+                    {
                     t.Tick();
+                    });
                     if(!t.Disposed)
                     {
                         t.Reschedule();
@@ -274,6 +290,7 @@ namespace Avalonia.X11
                 if (cancellationToken.IsCancellationRequested)
                     return;
                 CheckSignaled();
+                
                 HandleX11(cancellationToken);
             }
         }

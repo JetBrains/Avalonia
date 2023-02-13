@@ -20,7 +20,10 @@ namespace Avalonia.Native
 
             public void Run()
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 _tick();
+                });
             }
         }
 
@@ -35,7 +38,10 @@ namespace Avalonia.Native
 
             public void Signaled(int priority, int priorityContainsMeaningfulValue)
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 _parent.Signaled?.Invoke(priorityContainsMeaningfulValue.FromComBool() ? (DispatcherPriority?)priority : null);
+                });
             }
         }
 
