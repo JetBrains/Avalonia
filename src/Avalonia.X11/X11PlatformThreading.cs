@@ -9,6 +9,36 @@ using static Avalonia.X11.XLib;
 
 namespace Avalonia.X11
 {
+    public class X11EventArgs : EventArgs
+    {
+        public IntPtr XEvent { get; }
+
+        public X11EventArgs(IntPtr xEvent) => XEvent = xEvent;
+    }
+    
+    public static class X11Tools
+    {
+        public static IntPtr Display => (AvaloniaLocator.Current.GetService<IWindowingPlatform>() as AvaloniaX11Platform)?.Display ?? IntPtr.Zero;
+        public static IntPtr DeferredDisplay => (AvaloniaLocator.Current.GetService<IWindowingPlatform>() as AvaloniaX11Platform)?.DeferredDisplay ?? IntPtr.Zero;
+
+        public static (int x, int y) GetCursorPos() => XLib.GetCursorPos((AvaloniaLocator.Current.GetService<IWindowingPlatform>() as AvaloniaX11Platform)?.Info);
+
+        public static event EventHandler<X11EventArgs> XEvent;
+
+        internal static void OnXEvent(object sender, IntPtr xEvent) => XEvent?.Invoke(sender, new X11EventArgs(xEvent));
+        
+        public static void RefreshScreenInfo()
+        {
+            if (AvaloniaLocator.Current.GetService<IWindowingPlatform>() is not AvaloniaX11Platform platform)
+                return;
+
+            var x11Screens = X11Screens.Init(platform);
+            var screens = new X11Screens(x11Screens);
+            typeof(AvaloniaX11Platform).GetProperty(nameof(AvaloniaX11Platform.X11Screens))?.SetValue(platform, x11Screens);
+            typeof(AvaloniaX11Platform).GetProperty(nameof(AvaloniaX11Platform.Screens))?.SetValue(platform, screens);
+        }
+    }
+    
     unsafe class X11PlatformThreading : IPlatformThreadingInterface
     {
         private readonly AvaloniaX11Platform _platform;
@@ -174,6 +204,8 @@ namespace Avalonia.X11
                 if(XFilterEvent(ref xev, IntPtr.Zero))
                     continue;
 
+                X11Tools.OnXEvent(this, (IntPtr)(&xev));
+                
                 if (xev.type == XEventName.GenericEvent)
                     XGetEventData(_display, &xev.GenericEventCookie);
                 try
