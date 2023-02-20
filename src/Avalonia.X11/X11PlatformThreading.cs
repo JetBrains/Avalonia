@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -9,6 +10,42 @@ using static Avalonia.X11.XLib;
 
 namespace Avalonia.X11
 {
+    public class X11EventArgs : CancelEventArgs
+    {
+        public IntPtr XEvent { get; }
+
+        public X11EventArgs(IntPtr xEvent) => XEvent = xEvent;
+    }
+
+    public static class X11Tools
+    {
+        public static IntPtr Display => (AvaloniaLocator.Current.GetService<IWindowingPlatform>() as AvaloniaX11Platform)?.Display ?? IntPtr.Zero;
+        public static IntPtr DeferredDisplay => (AvaloniaLocator.Current.GetService<IWindowingPlatform>() as AvaloniaX11Platform)?.DeferredDisplay ?? IntPtr.Zero;
+        public static int? XIOpcode => AvaloniaLocator.Current.GetService<IWindowingPlatform>() is  AvaloniaX11Platform p && p.XI2 != null ? p.Info.XInputOpcode : null;
+
+        public static (int x, int y) GetCursorPos() => XLib.GetCursorPos((AvaloniaLocator.Current.GetService<IWindowingPlatform>() as AvaloniaX11Platform)?.Info);
+
+        public static event EventHandler<X11EventArgs> XEvent;
+
+        internal static bool OnXEvent(object sender, IntPtr xEvent)
+        {
+            var args = new X11EventArgs(xEvent);
+            XEvent?.Invoke(sender, args);
+            return !args.Cancel;
+        }
+
+        public static void RefreshScreenInfo()
+        {
+            if (AvaloniaLocator.Current.GetService<IWindowingPlatform>() is not AvaloniaX11Platform platform)
+                return;
+
+            var x11Screens = X11Screens.Init(platform);
+            var screens = new X11Screens(x11Screens);
+            typeof(AvaloniaX11Platform).GetProperty(nameof(AvaloniaX11Platform.X11Screens))?.SetValue(platform, x11Screens);
+            typeof(AvaloniaX11Platform).GetProperty(nameof(AvaloniaX11Platform.Screens))?.SetValue(platform, screens);
+        }
+    }
+
     internal unsafe class X11PlatformThreading : IControlledDispatcherImpl
     {
         private readonly AvaloniaX11Platform _platform;
@@ -133,6 +170,9 @@ namespace Avalonia.X11
                     XGetEventData(_display, &xev.GenericEventCookie);
                 try
                 {
+                    if (!X11Tools.OnXEvent(this, (IntPtr)(&xev)))
+                        return;
+
                     if (xev.type == XEventName.GenericEvent)
                     {
                         if (_platform.XI2 != null && _platform.Info.XInputOpcode ==
