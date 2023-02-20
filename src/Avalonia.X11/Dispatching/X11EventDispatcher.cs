@@ -6,6 +6,8 @@ namespace Avalonia.X11;
 
 internal class X11EventDispatcher
 {
+    public static event EventHandler<System.ComponentModel.CancelEventArgs>? XEvent;
+
     private readonly AvaloniaX11Platform _platform;
     private readonly IntPtr _display;
 
@@ -38,6 +40,11 @@ internal class X11EventDispatcher
                 XGetEventData(_display, &xev.GenericEventCookie);
             try
             {
+                var args = new System.ComponentModel.CancelEventArgs();
+                XEvent?.Invoke((IntPtr)(&xev), args);
+                if (args.Cancel)
+                    return;
+                
                 if (xev.type == XEventName.GenericEvent)
                 {
                     if (_platform.XI2 != null && _platform.Info.XInputOpcode ==
