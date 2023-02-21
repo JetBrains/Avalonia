@@ -45,6 +45,11 @@ namespace Avalonia.Controls
                 else
                 {
                     var tip = control.GetValue(ToolTip.ToolTipProperty);
+                    if (tip == null)
+                    {
+                        Close(control);
+                        return;
+                    }
 
                     tip.Content = e.NewValue;
                 }
