@@ -65,6 +65,7 @@ namespace Avalonia.UnitTests
                 .Bind<ICursorFactory>().ToConstant(Services.StandardCursorFactory)
                 .Bind<IStyler>().ToConstant(Services.Styler)
                 .Bind<IWindowingPlatform>().ToConstant(Services.WindowingPlatform)
+                .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
                 .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>();
             var styles = Services.Theme?.Invoke();
 

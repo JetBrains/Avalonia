@@ -70,6 +70,7 @@ namespace Avalonia.Headless
                 .Bind<IFontManagerImpl>().ToSingleton<HeadlessFontManagerStub>()
                 .Bind<ITextShaperImpl>().ToSingleton<HeadlessTextShaperStub>()
                 .Bind<IWindowingPlatform>().ToConstant(new HeadlessWindowingPlatform())
+                .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
                 .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>();
         }
 

@@ -50,6 +50,7 @@ namespace Avalonia.Android
                 .Bind<IPlatformIconLoader>().ToSingleton<PlatformIconLoader>()
                 .Bind<IRenderTimer>().ToConstant(new ChoreographerTimer())
                 .Bind<IRenderLoop>().ToConstant(new RenderLoop())
+                .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
                 .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>()
                 .Bind<IAssetLoader>().ToConstant(new AssetLoader(appType.Assembly));
 
