@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Avalonia.Rendering;
+
 namespace Avalonia.Input
 {
     /// <summary>
@@ -27,6 +30,13 @@ namespace Avalonia.Input
             KeyModifiers keyModifiers = KeyModifiers.None);
 
         /// <summary>
+        /// Clears focus from control while keeping focus in another scopes.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <returns></returns>
+        void ClearFocus(IInputElement control);
+
+        /// <summary>
         /// Notifies the focus manager of a change in focus scope.
         /// </summary>
         /// <param name="scope">The new focus scope.</param>
@@ -43,5 +53,9 @@ namespace Avalonia.Input
         /// This should not be called by client code. It is called by an <see cref="IFocusScope"/>
         /// when it deactivates or closes, e.g. when a Window is closed.
         void RemoveFocusScope(IFocusScope scope);
+
+        void UpdateFocusWithin(IRenderRoot root);
+        
+        IEnumerable<IInputElement> GetFocusedElements(IRenderRoot root);
     }
 }

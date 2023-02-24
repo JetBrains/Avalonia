@@ -16,7 +16,7 @@ namespace Avalonia.Input
     /// <summary>
     /// Implements input-related functionality for a control.
     /// </summary>
-    [PseudoClasses(":disabled", ":focus", ":focus-visible", ":focus-within", ":pointerover")]
+    [PseudoClasses(":disabled", ":focus", ":focus-visible", ":keyboard-focus-within", ":pointerover", ":focus-within")]
     public class InputElement : Interactive, IInputElement
     {
         /// <summary>
@@ -52,6 +52,14 @@ namespace Avalonia.Input
             AvaloniaProperty.RegisterDirect<InputElement, bool>(
                 nameof(IsKeyboardFocusWithin),
                 o => o.IsKeyboardFocusWithin);
+        
+        /// <summary>
+        /// Defines the <see cref="IsFocusWithin"/> property.
+        /// </summary>
+        public static readonly DirectProperty<InputElement, bool> IsFocusWithinProperty =
+            AvaloniaProperty.RegisterDirect<InputElement, bool>(
+                nameof(IsFocusWithin),
+                o => o.IsFocusWithin);
         
         /// <summary>
         /// Defines the <see cref="IsFocused"/> property.
@@ -200,6 +208,7 @@ namespace Avalonia.Input
         private bool _isEffectivelyEnabled = true;
         private bool _isFocused;
         private bool _isKeyboardFocusWithin;
+        private bool _isFocusWithin;
         private bool _isFocusVisible;
         private bool _isPointerOver;
         private GestureRecognizerCollection? _gestureRecognizers;
@@ -412,6 +421,15 @@ namespace Avalonia.Input
         }
 
         /// <summary>
+        /// Gets a value indicating whether focus is anywhere within the element or its visual tree child elements.
+        /// </summary>
+        public bool IsFocusWithin
+        {
+            get => _isFocusWithin;
+            internal set => SetAndRaise(IsFocusWithinProperty, ref _isFocusWithin, value); 
+        }
+        
+        /// <summary>
         /// Gets a value indicating whether the control is focused.
         /// </summary>
         public bool IsFocused
@@ -497,9 +515,11 @@ namespace Avalonia.Input
         {
             base.OnDetachedFromVisualTreeCore(e);
 
+            IsFocusWithin = false;
             if (IsFocused)
             {
-                FocusManager.Instance?.Focus(null);
+                FocusManager.Instance?.ClearFocus(this);
+                FocusManager.Instance?.UpdateFocusWithin(e.Root);
             }
         }
 
@@ -631,6 +651,10 @@ namespace Avalonia.Input
                 UpdatePseudoClasses(null, change.NewValue.GetValueOrDefault<bool>());
             }
             else if (change.Property == IsKeyboardFocusWithinProperty)
+            {
+                PseudoClasses.Set(":keyboard-focus-within", change.NewValue.GetValueOrDefault<bool>());
+            }
+            else if (change.Property == IsFocusWithinProperty)
             {
                 PseudoClasses.Set(":focus-within", change.NewValue.GetValueOrDefault<bool>());
             }
