@@ -327,7 +327,7 @@ namespace Avalonia.Controls
                     break;
                 case Key.Tab:
                     var nextFocus = KeyboardNavigationHandler.GetNext(FocusManager.Instance.Current, NavigationDirection.Next);
-                    KeyboardDevice.Instance?.SetFocusedElement(nextFocus, NavigationMethod.Tab, KeyModifiers.None);
+                    FocusManager.Instance?.Focus(nextFocus, NavigationMethod.Tab, KeyModifiers.None);
                     e.Handled = true;
                     break;
                 case Key.Enter:
@@ -449,15 +449,15 @@ namespace Avalonia.Controls
 
             if (monthCol < dayCol && monthCol < yearCol)
             {
-                KeyboardDevice.Instance?.SetFocusedElement(_monthSelector, NavigationMethod.Pointer, KeyModifiers.None);
+                FocusManager.Instance?.Focus(_monthSelector, NavigationMethod.Pointer, KeyModifiers.None);
             }
             else if (dayCol < monthCol && dayCol < yearCol)
             {
-                KeyboardDevice.Instance?.SetFocusedElement(_daySelector, NavigationMethod.Pointer, KeyModifiers.None);
+                FocusManager.Instance?.Focus(_daySelector, NavigationMethod.Pointer, KeyModifiers.None);
             }
             else if (yearCol < monthCol && yearCol < dayCol)
             {
-                KeyboardDevice.Instance?.SetFocusedElement(_yearSelector, NavigationMethod.Pointer, KeyModifiers.None);
+                FocusManager.Instance?.Focus(_yearSelector, NavigationMethod.Pointer, KeyModifiers.None);
             }
         }
 

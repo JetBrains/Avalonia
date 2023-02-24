@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Avalonia.Rendering;
+
 namespace Avalonia.Input
 {
     /// <summary>
@@ -43,5 +46,9 @@ namespace Avalonia.Input
         /// This should not be called by client code. It is called by an <see cref="IFocusScope"/>
         /// when it deactivates or closes, e.g. when a Window is closed.
         void RemoveFocusScope(IFocusScope scope);
+
+        void UpdateFocusWithin(IRenderRoot root);
+        
+        IEnumerable<IInputElement> GetFocusedElements(IRenderRoot root);
     }
 }
