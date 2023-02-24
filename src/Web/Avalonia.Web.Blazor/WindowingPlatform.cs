@@ -44,6 +44,7 @@ namespace Avalonia.Web.Blazor
                 .Bind<ISystemDialogImpl>().ToSingleton<SystemDialogsStub>()
                 .Bind<IWindowingPlatform>().ToConstant(instance)
                 .Bind<IPlatformIconLoader>().ToSingleton<IconLoaderStub>()
+                .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
                 .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>();
         }
 
