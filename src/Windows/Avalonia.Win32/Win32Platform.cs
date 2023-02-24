@@ -170,6 +170,7 @@ namespace Avalonia.Win32
                 .Bind<IRenderTimer>().ToConstant(new DefaultRenderTimer(60))
                 .Bind<ISystemDialogImpl>().ToSingleton<SystemDialogImpl>()
                 .Bind<IWindowingPlatform>().ToConstant(s_instance)
+                .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
                 .Bind<PlatformHotkeyConfiguration>().ToConstant(new PlatformHotkeyConfiguration(KeyModifiers.Control)
                 {
                     OpenContextMenu =

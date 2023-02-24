@@ -113,6 +113,7 @@ namespace Avalonia.Native
                 .Bind<IRenderTimer>().ToConstant(new DefaultRenderTimer(60))
                 .Bind<ISystemDialogImpl>().ToConstant(new SystemDialogs(_factory.CreateSystemDialogs()))
                 .Bind<PlatformHotkeyConfiguration>().ToConstant(new PlatformHotkeyConfiguration(KeyModifiers.Meta, wholeWordTextActionModifiers: KeyModifiers.Alt))
+                .Bind<PlatformPointerConfiguration>().ToConstant(new PlatformPointerConfiguration(new PointerGesture(MouseButton.Left, KeyModifiers.Control)))
                 .Bind<IMountedVolumeInfoProvider>().ToConstant(new MacOSMountedVolumeInfoProvider())
                 .Bind<IPlatformDragSource>().ToConstant(new AvaloniaNativeDragSource(_factory))
                 .Bind<IPlatformLifetimeEventsImpl>().ToConstant(applicationPlatform)

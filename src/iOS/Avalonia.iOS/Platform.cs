@@ -32,6 +32,7 @@ namespace Avalonia.iOS
                 .Bind<IClipboard>().ToConstant(new ClipboardImpl())
                 .Bind<IPlatformSettings>().ToConstant(new PlatformSettings())
                 .Bind<IPlatformIconLoader>().ToConstant(new PlatformIconLoaderStub())
+                .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
                 .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>()
                 .Bind<IRenderLoop>().ToSingleton<RenderLoop>()
                 .Bind<IRenderTimer>().ToConstant(Timer)
