@@ -885,7 +885,12 @@ namespace Avalonia.X11
 
 
         public void Resize(Size clientSize, PlatformResizeReason reason) => Resize(clientSize, false, reason);
-        public void Move(PixelPoint point) => Position = point;
+        public void Move(PixelPoint point)
+        {
+            Position = point;
+            UpdateScaling();
+        }
+
         private void MoveResize(PixelPoint position, Size size, double scaling)
         {
             Move(position);
