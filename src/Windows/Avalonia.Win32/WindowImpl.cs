@@ -825,7 +825,7 @@ namespace Avalonia.Win32
             */
             
             var dpi = GetDpi();
-            _scaling = _scaling = dpi / 96d;
+            _scaling = dpi / 96d;
 
             ConnectWindowOverride(hwnd);
         }
@@ -838,13 +838,10 @@ namespace Avalonia.Win32
                 var monitor = MonitorFromWindow(
                     _hwnd,
                     MONITOR.MONITOR_DEFAULTTONEAREST);
-                        
+
                 var method = GetProcAddress(shcore, nameof(GetDpiForMonitor));
-                if (method != IntPtr.Zero)
-                {
-                    GetDpiForMonitor(monitor, MONITOR_DPI_TYPE.MDT_EFFECTIVE_DPI, out var dpiX, out _);
+                if (method != IntPtr.Zero && GetDpiForMonitor(monitor, MONITOR_DPI_TYPE.MDT_EFFECTIVE_DPI, out var dpiX, out _) == 0)
                     return dpiX;
-                }
             }
 
             var hdc = GetDC(IntPtr.Zero);
