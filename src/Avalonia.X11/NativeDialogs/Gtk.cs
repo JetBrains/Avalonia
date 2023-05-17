@@ -289,7 +289,7 @@ namespace Avalonia.X11.NativeDialogs
                 }
 
                 IntPtr app;
-                using (var utf = new Utf8Buffer($"avalonia.app.a{Guid.NewGuid():N}"))
+                using (var utf = new Utf8Buffer(Interop.GtkInteropHelper.ApplicationId ?? $"avalonia.app.a{Guid.NewGuid():N}"))
                     app = gtk_application_new(utf, 0);
                 if (app == IntPtr.Zero)
                 {

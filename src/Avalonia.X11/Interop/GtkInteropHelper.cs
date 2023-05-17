@@ -6,6 +6,8 @@ namespace Avalonia.X11.Interop;
 
 public class GtkInteropHelper
 {
+    public static string ApplicationId { get; set; }
+
     public static async Task<T> RunOnGlibThread<T>(Func<T> cb)
     {
         if (!await NativeDialogs.Gtk.StartGtk().ConfigureAwait(false))
