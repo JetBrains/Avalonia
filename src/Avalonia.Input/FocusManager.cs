@@ -53,6 +53,15 @@ namespace Avalonia.Input
             private set;
         }
 
+        public void ClearFocus(IInputElement control)
+        {
+            var scope = GetFocusScopeAncestors(control).FirstOrDefault();
+            if (scope != null)
+                SetFocusedElement(scope, null);
+            else
+                Focus(null);
+        }
+
         /// <summary>
         /// Focuses a control.
         /// </summary>

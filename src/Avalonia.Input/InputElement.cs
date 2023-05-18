@@ -518,7 +518,7 @@ namespace Avalonia.Input
             IsFocusWithin = false;
             if (IsFocused)
             {
-                FocusManager.Instance?.Focus(null);
+                FocusManager.Instance?.ClearFocus(this);
                 FocusManager.Instance?.UpdateFocusWithin(e.Root);
             }
         }

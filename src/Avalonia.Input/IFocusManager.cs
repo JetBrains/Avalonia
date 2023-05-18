@@ -30,6 +30,13 @@ namespace Avalonia.Input
             KeyModifiers keyModifiers = KeyModifiers.None);
 
         /// <summary>
+        /// Clears focus from control while keeping focus in another scopes.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <returns></returns>
+        void ClearFocus(IInputElement control);
+
+        /// <summary>
         /// Notifies the focus manager of a change in focus scope.
         /// </summary>
         /// <param name="scope">The new focus scope.</param>
