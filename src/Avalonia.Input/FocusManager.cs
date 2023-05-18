@@ -55,11 +55,12 @@ namespace Avalonia.Input
 
         public void ClearFocus(IInputElement control)
         {
-            var scope = GetFocusScopeAncestors(control).FirstOrDefault();
-            if (scope != null)
-                SetFocusedElement(scope, null);
-            else
-                Focus(null);
+            while (control != null)
+            {
+                if (control is IFocusScope scope && _focusScopes.TryGetValue(scope, out var scopeFocus) && scopeFocus == control)
+                    SetFocusedElement(scope, null);
+                control = control.GetVisualParent<IInputElement>();
+            }
         }
 
         /// <summary>
@@ -119,7 +120,7 @@ namespace Avalonia.Input
 
         public IEnumerable<IInputElement> GetFocusedElements(IRenderRoot root) =>
             root != null && _focusedControls.TryGetValue(root, out var result) ? result : Enumerable.Empty<IInputElement>();
-        
+
         /// <summary>
         /// Sets the currently focused element in the specified scope.
         /// </summary>
@@ -141,7 +142,7 @@ namespace Avalonia.Input
 
             IRenderRoot? oldRoot = null;
             IRenderRoot? newRoot = null;
-            
+
             if (_focusScopes.TryGetValue(scope, out var existingElement))
             {
                 if (element != existingElement)
@@ -156,44 +157,42 @@ namespace Avalonia.Input
             else
             {
                 _focusScopes.Add(scope, element);
-                
+
                 oldRoot = newRoot = element?.VisualRoot;
             }
 
             if (Scope == scope)
-            {
                 KeyboardDevice.Instance?.SetFocusedElement(element, method, keyModifiers);
 
-                if (element != existingElement)
+            if (element != existingElement)
+            {
+                if (existingElement?.VisualRoot != null && _focusedControls.TryGetValue(existingElement.VisualRoot, out var existingSet))
                 {
-                    if (existingElement?.VisualRoot != null && _focusedControls.TryGetValue(existingElement.VisualRoot, out var existingSet))
-                    {
-                        existingSet.Remove(existingElement);
-                        if (!existingSet.Any())
-                            _focusedControls.Remove(existingElement.VisualRoot);
-                    }
-
-                    existingElement?.RaiseEvent(new RoutedEventArgs { RoutedEvent = InputElement.LostFocusEvent, });
-
-                    if (element?.VisualRoot != null)
-                    {
-                        if (!_focusedControls.TryGetValue(element.VisualRoot, out var newSet))
-                        {
-                            newSet = new HashSet<IInputElement>();
-                            _focusedControls.Add(element.VisualRoot, newSet);
-                        }
-
-                        newSet.Add(element);
-                    }
-
-                    element?.RaiseEvent(new GotFocusEventArgs { RoutedEvent = InputElement.GotFocusEvent, NavigationMethod = method, KeyModifiers = keyModifiers, });
-
-                    if (oldRoot != null)
-                        UpdateFocusWithin(oldRoot);
-
-                    if (newRoot != null && (oldRoot == null || oldRoot != newRoot))
-                        UpdateFocusWithin(newRoot);
+                    existingSet.Remove(existingElement);
+                    if (!existingSet.Any())
+                        _focusedControls.Remove(existingElement.VisualRoot);
                 }
+
+                existingElement?.RaiseEvent(new RoutedEventArgs { RoutedEvent = InputElement.LostFocusEvent, });
+
+                if (element?.VisualRoot != null)
+                {
+                    if (!_focusedControls.TryGetValue(element.VisualRoot, out var newSet))
+                    {
+                        newSet = new HashSet<IInputElement>();
+                        _focusedControls.Add(element.VisualRoot, newSet);
+                    }
+
+                    newSet.Add(element);
+                }
+
+                element?.RaiseEvent(new GotFocusEventArgs { RoutedEvent = InputElement.GotFocusEvent, NavigationMethod = method, KeyModifiers = keyModifiers, });
+
+                if (oldRoot != null)
+                    UpdateFocusWithin(oldRoot);
+
+                if (newRoot != null && (oldRoot == null || oldRoot != newRoot))
+                    UpdateFocusWithin(newRoot);
             }
         }
 
