@@ -2,6 +2,7 @@ using System;
 using Avalonia.Input;
 using Avalonia.Input.Raw;
 using Avalonia.Reactive;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 
 namespace Avalonia.Controls
@@ -129,6 +130,17 @@ namespace Avalonia.Controls
         {
             var control = (Control)e.Sender;
 
+            if (e.OldValue != null)
+            {
+                control.RemoveHandler(InputElement.PointerPressedEvent, ControlPointerPressed);
+            }
+
+            if (e.NewValue != null)
+            {
+                control.AddHandler(InputElement.PointerPressedEvent, ControlPointerPressed,
+                    RoutingStrategies.Bubble | RoutingStrategies.Tunnel | RoutingStrategies.Direct, true);
+            }
+
             if (ToolTip.GetIsOpen(control) && e.NewValue != e.OldValue && !(e.NewValue is ToolTip))
             {
                 if (e.NewValue is null)
@@ -205,6 +217,11 @@ namespace Avalonia.Controls
                     StartShowTimer(showDelay, newValue);
                 }
             }
+        }
+
+        private void ControlPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            StopTimer();
         }
 
         private void ControlEffectiveViewportChanged(object? sender, Layout.EffectiveViewportChangedEventArgs e)
