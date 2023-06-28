@@ -1,4 +1,5 @@
 using System;
+using Avalonia.Platform;
 using Avalonia.Reactive;
 
 namespace Avalonia.Threading;
@@ -197,7 +198,9 @@ public partial class DispatcherTimer
 
         timer.Tick += (s, e) =>
         {
-            if (!action())
+            var result = false;
+            PlatformExceptionHandler.Catch(() => result = action());
+            if (!result)
             {
                 timer.Stop();
             }
@@ -228,7 +231,7 @@ public partial class DispatcherTimer
 
         timer.Tick += (s, e) =>
         {
-            action();
+            PlatformExceptionHandler.Catch(action);
             timer.Stop();
         };
 

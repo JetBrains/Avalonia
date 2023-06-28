@@ -20,6 +20,19 @@ using static Avalonia.Win32.Interop.UnmanagedMethods;
 
 namespace Avalonia
 {
+    internal static class SafeWndProc
+    {
+        public static WndProc WndProc(WndProc wndProc) =>
+            (hWnd, msg, wParam, lParam) =>
+            {
+                var result = IntPtr.Zero;
+                return PlatformExceptionHandler.Catch(() =>
+                {
+                    result = wndProc(hWnd, msg, wParam, lParam);
+                }) ? result : DefWindowProc(hWnd, msg, wParam, lParam);
+            };
+    }
+
     public static class Win32ApplicationExtensions
     {
         public static AppBuilder UseWin32(this AppBuilder builder)
@@ -177,7 +190,7 @@ namespace Avalonia.Win32
         private void CreateMessageWindow()
         {
             // Ensure that the delegate doesn't get garbage collected by storing it as a field.
-            _wndProcDelegate = WndProc;
+            _wndProcDelegate = SafeWndProc.WndProc(WndProc);
 
             WNDCLASSEX wndClassEx = new WNDCLASSEX
             {
