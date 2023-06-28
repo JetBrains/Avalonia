@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using Avalonia.Native.Interop;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using MicroCom.Runtime;
 
@@ -36,11 +37,29 @@ internal class DispatcherImpl : IControlledDispatcherImpl, IDispatcherImplWithEx
         {
             _parent = parent;
         }
-        public void Signaled() => _parent.Signaled?.Invoke();
+        public void Signaled()
+        {
+            PlatformExceptionHandler.Catch(() =>
+            {
+                _parent.Signaled?.Invoke();
+            });
+        }
 
-        public void Timer() => _parent.Timer?.Invoke();
+        public void Timer()
+        {
+            PlatformExceptionHandler.Catch(() =>
+            {
+                _parent.Timer?.Invoke();
+            });
+        }
 
-        public void ReadyForBackgroundProcessing() => _parent.ReadyForBackgroundProcessing?.Invoke();
+        public void ReadyForBackgroundProcessing()
+        {
+            PlatformExceptionHandler.Catch(() =>
+            {
+                _parent.ReadyForBackgroundProcessing?.Invoke();
+            });
+        }
     }
 
     public bool CurrentThreadIsLoopThread
