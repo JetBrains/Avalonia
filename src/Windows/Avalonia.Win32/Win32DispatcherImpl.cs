@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using Avalonia.Win32.Interop;
 using static Avalonia.Win32.Interop.UnmanagedMethods;
@@ -31,12 +32,24 @@ internal class Win32DispatcherImpl : IControlledDispatcherImpl
             new IntPtr(SignalW),
             new IntPtr(SignalL));
     
-    public void DispatchWorkItem() => Signaled?.Invoke();
-    
+    public void DispatchWorkItem()
+    {
+        PlatformExceptionHandler.Catch(() =>
+        {
+            Signaled?.Invoke();
+        });
+    }
+
     public event Action? Signaled;
     public event Action? Timer;
 
-    public void FireTimer() => Timer?.Invoke();
+    public void FireTimer()
+    {
+        PlatformExceptionHandler.Catch(() =>
+        {
+            Timer?.Invoke();
+        });
+    }
 
     public void UpdateTimer(long? dueTimeInMs)
     {

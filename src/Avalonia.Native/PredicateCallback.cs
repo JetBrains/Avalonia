@@ -14,7 +14,10 @@ namespace Avalonia.Native
 
         int IAvnPredicateCallback.Evaluate()
         {
+            return Platform.PlatformExceptionHandler.Catch(() =>
+            {
             return _predicate().AsComBool();
+            });
         }
     }
 }
