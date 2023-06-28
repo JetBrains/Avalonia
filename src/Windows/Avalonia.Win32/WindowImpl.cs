@@ -84,7 +84,7 @@ namespace Avalonia.Win32
         private readonly Win32NativeControlHost _nativeControlHost;
         private readonly IStorageProvider _storageProvider;
         private readonly WindowsInputPane? _inputPane;
-        private WndProc _wndProcDelegate;
+        private WndProc? _wndProcDelegate;
         private string? _className;
         private IntPtr _hwnd;
         private IInputRoot? _owner;
@@ -119,7 +119,7 @@ namespace Avalonia.Win32
         private static MOUSEMOVEPOINT[]? s_mouseHistoryInfos;
         private PlatformThemeVariant _currentThemeVariant;
 
-        public WindowImpl()
+        public WindowImpl(IntPtr? hwnd = null)
         {
             _touchDevice = new TouchDevice();
             _mouseDevice = new WindowsMouseDevice();
@@ -149,7 +149,10 @@ namespace Avalonia.Win32
 
             _wmPointerEnabled = Win32Platform.WindowsVersion >= PlatformConstants.Windows8;
 
-            CreateWindow();
+            if (hwnd == null)
+                CreateWindow();
+            else
+                ConnectWindow(hwnd.Value);
             _framebuffer = new FramebufferManager(_hwnd);
 
             if (this is not PopupImpl)
@@ -895,6 +898,10 @@ namespace Avalonia.Win32
                 IntPtr.Zero);
         }
 
+        protected virtual void ConnectWindowOverride(IntPtr hwnd)
+        {
+        }
+
         [MemberNotNull(nameof(_wndProcDelegate))]
         [MemberNotNull(nameof(_className))]
         [MemberNotNull(nameof(Handle))]
@@ -926,7 +933,13 @@ namespace Avalonia.Win32
                 throw new Win32Exception();
             }
 
-            _hwnd = CreateWindowOverride(atom);
+            ConnectWindow(CreateWindowOverride(atom));
+        }
+
+        [MemberNotNull(nameof(Handle))]
+        private void ConnectWindow(IntPtr hwnd)
+        {
+            _hwnd = hwnd;
 
             if (_hwnd == IntPtr.Zero)
             {
@@ -952,6 +965,8 @@ namespace Avalonia.Win32
                     _scaling = _dpi / StandardDpi;
                 }
             }
+            
+            ConnectWindowOverride(hwnd);
         }
 
         private IntPtr WndProcMessageHandler(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
