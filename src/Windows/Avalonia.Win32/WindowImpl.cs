@@ -107,7 +107,7 @@ namespace Avalonia.Win32
         private static POINTER_INFO[]? s_historyInfos;
         private static MOUSEMOVEPOINT[]? s_mouseHistoryInfos;
 
-        public WindowImpl()
+        public WindowImpl(IntPtr? hwnd = null)
         {
             _touchDevice = new TouchDevice();
             _mouseDevice = new WindowsMouseDevice();
@@ -148,7 +148,10 @@ namespace Avalonia.Win32
 
             _wmPointerEnabled = Win32Platform.WindowsVersion >= PlatformConstants.Windows8;
 
-            CreateWindow();
+            if (hwnd == null)
+                CreateWindow();
+            else
+                ConnectWindow(hwnd.Value);
             _framebuffer = new FramebufferManager(_hwnd);
             
             if (this is not PopupImpl)
@@ -806,6 +809,10 @@ namespace Avalonia.Win32
                 IntPtr.Zero);
         }
 
+        protected virtual void ConnectWindowOverride(IntPtr hwnd)
+        {
+        }
+
         [MemberNotNull(nameof(_wndProcDelegate))]
         [MemberNotNull(nameof(_className))]
         [MemberNotNull(nameof(Handle))]
@@ -837,7 +844,12 @@ namespace Avalonia.Win32
                 throw new Win32Exception();
             }
 
-            _hwnd = CreateWindowOverride(atom);
+            ConnectWindow(CreateWindowOverride(atom));
+        }
+
+        private void ConnectWindow(IntPtr hwnd)
+        {
+            _hwnd = hwnd;
 
             if (_hwnd == IntPtr.Zero)
             {
@@ -849,6 +861,8 @@ namespace Avalonia.Win32
             RegisterTouchWindow(_hwnd, 0);
 
             _scaling = GetDpi() / 96d;
+
+            ConnectWindowOverride(hwnd);
         }
 
         private double GetDpi()
