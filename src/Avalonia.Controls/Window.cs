@@ -694,6 +694,11 @@ namespace Avalonia.Controls
                 _shown = true;
                 IsVisible = true;
 
+                // We need to set position first because it is required for getting correct display scale. If position is not manual then it can be
+                // determined only by calling this method. But here it will calculate not precise location because scaling may not yet be applied (see i.e. X11Window),
+                // thus we ought to call it again later to center window correctly if needed, when scaling will be already applied
+                SetWindowStartupLocation(owner);
+
                 var initialSize = new Size(
                     double.IsNaN(Width) ? Math.Max(MinWidth, ClientSize.Width) : Width,
                     double.IsNaN(Height) ? Math.Max(MinHeight, ClientSize.Height) : Height);
@@ -713,6 +718,7 @@ namespace Avalonia.Controls
                 Owner = owner;
                 owner?.AddChild(this, false);
 
+                // Second call will calculate correct position because both current and owner windows have correct scaling.
                 SetWindowStartupLocation(owner);
 
                 PlatformImpl?.Show(ShowActivated, false);
@@ -772,6 +778,11 @@ namespace Avalonia.Controls
                 _showingAsDialog = true;
                 IsVisible = true;
 
+                // We need to set position first because it is required for getting correct display scale. If position is not manual then it can be
+                // determined only by calling this method. But here it will calculate not precise location because scaling may not yet be applied (see i.e. X11Window),
+                // thus we ought to call it again later to center window correctly if needed, when scaling will be already applied
+                SetWindowStartupLocation(owner);
+
                 var initialSize = new Size(
                     double.IsNaN(Width) ? ClientSize.Width : Width,
                     double.IsNaN(Height) ? ClientSize.Height : Height);
@@ -789,6 +800,7 @@ namespace Avalonia.Controls
                 Owner = owner;
                 owner.AddChild(this, true);
 
+                // Second call will calculate correct position because both current and owner windows have correct scaling.
                 SetWindowStartupLocation(owner);
 
                 PlatformImpl?.Show(ShowActivated, true);
