@@ -77,7 +77,7 @@ namespace Avalonia.Win32
 
         private readonly Win32NativeControlHost _nativeControlHost;
         private readonly IStorageProvider _storageProvider;
-        private WndProc _wndProcDelegate;
+        private WndProc? _wndProcDelegate;
         private string? _className;
         private IntPtr _hwnd;
         private IInputRoot? _owner;
@@ -819,7 +819,7 @@ namespace Avalonia.Win32
         private void CreateWindow()
         {
             // Ensure that the delegate doesn't get garbage collected by storing it as a field.
-            _wndProcDelegate = WndProc;
+            _wndProcDelegate = SafeWndProc.WndProc(WndProc);
 
             _className = $"Avalonia-{Guid.NewGuid().ToString()}";
 
@@ -847,6 +847,7 @@ namespace Avalonia.Win32
             ConnectWindow(CreateWindowOverride(atom));
         }
 
+        [MemberNotNull(nameof(Handle))]
         private void ConnectWindow(IntPtr hwnd)
         {
             _hwnd = hwnd;

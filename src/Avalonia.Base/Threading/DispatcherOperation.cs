@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Platform;
 
 namespace Avalonia.Threading;
 
@@ -271,7 +272,7 @@ public class DispatcherOperation
     {
         try
         {
-            ((Action)Callback!)();
+            PlatformExceptionHandler.Catch((Action)Callback!);
             lock (Dispatcher.InstanceLock)
             {
                 Status = DispatcherOperationStatus.Completed;
