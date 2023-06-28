@@ -145,7 +145,10 @@ namespace Avalonia.X11
                 _signaled = false;
             }
 
+            PlatformExceptionHandler.Catch(() =>
+            {
             Signaled?.Invoke();
+            });
         }
 
         private unsafe void HandleX11(CancellationToken cancellationToken)
@@ -154,10 +157,12 @@ namespace Avalonia.X11
             {
                 if (cancellationToken.IsCancellationRequested)
                     return;
-                
+
+                void Handler()
+                {
                 XNextEvent(_display, out var xev);
                 if(XFilterEvent(ref xev, IntPtr.Zero))
-                    continue;
+                    return;
 
                 if (xev.type == XEventName.GenericEvent)
                     XGetEventData(_display, &xev.GenericEventCookie);
@@ -179,6 +184,8 @@ namespace Avalonia.X11
                     if (xev.type == XEventName.GenericEvent && xev.GenericEventCookie.data != null)
                         XFreeEventData(_display, &xev.GenericEventCookie);
                 }
+                }
+                PlatformExceptionHandler.Catch(Handler);
             }
         }
 
@@ -189,7 +196,10 @@ namespace Avalonia.X11
                 var now = _clock.ElapsedMilliseconds;
                 if (_nextTimer.HasValue && now > _nextTimer.Value)
                 {
+                    PlatformExceptionHandler.Catch(() =>
+                    {
                     Timer?.Invoke();
+                    });
                 }
 
                 if (cancellationToken.IsCancellationRequested)

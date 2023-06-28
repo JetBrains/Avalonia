@@ -71,7 +71,7 @@ namespace Avalonia.Win32
 
             public DumbWindow(bool layered = false, IntPtr? parent = null)
             {
-                _wndProcDelegate = WndProc;
+                _wndProcDelegate = SafeWndProc.WndProc(WndProc);
                 var wndClassEx = new UnmanagedMethods.WNDCLASSEX
                 {
                     cbSize = Marshal.SizeOf<UnmanagedMethods.WNDCLASSEX>(),
