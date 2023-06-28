@@ -119,7 +119,8 @@ namespace Avalonia.Native
             hotkeys.MoveCursorToTheEndOfLine.Add(new KeyGesture(Key.Right, hotkeys.CommandModifiers));
             hotkeys.MoveCursorToTheEndOfLineWithSelection.Add(new KeyGesture(Key.Right, hotkeys.CommandModifiers | hotkeys.SelectionModifiers));
 
-            AvaloniaLocator.CurrentMutable.Bind<PlatformHotkeyConfiguration>().ToConstant(hotkeys);
+            AvaloniaLocator.CurrentMutable.Bind<PlatformHotkeyConfiguration>().ToConstant(hotkeys)
+                .Bind<PlatformPointerConfiguration>().ToConstant(new PlatformPointerConfiguration(new PointerGesture(MouseButton.Left, KeyModifiers.Control)));
             
             if (_options.UseGpu)
             {

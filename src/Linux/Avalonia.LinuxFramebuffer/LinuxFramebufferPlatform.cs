@@ -48,6 +48,7 @@ namespace Avalonia.LinuxFramebuffer
                 .Bind<ICursorFactory>().ToTransient<CursorFactoryStub>()
                 .Bind<IKeyboardDevice>().ToConstant(new KeyboardDevice())
                 .Bind<IPlatformSettings>().ToSingleton<DefaultPlatformSettings>()
+                .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
                 .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>();
             
             Compositor = new Compositor(AvaloniaLocator.Current.GetService<IPlatformGraphics>());
