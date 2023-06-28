@@ -51,7 +51,10 @@ namespace Avalonia.Native
             {
                 if (_parent.Closing != null)
                 {
+                    return PlatformExceptionHandler.Catch(() =>
+                    {
                     return _parent.Closing(WindowCloseReason.WindowClosing).AsComBool();
+                    });
                 }
 
                 return true.AsComBool();
@@ -59,14 +62,20 @@ namespace Avalonia.Native
 
             void IAvnWindowEvents.WindowStateChanged(AvnWindowState state)
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 _parent.InvalidateExtendedMargins();
 
                 _parent.WindowStateChanged?.Invoke((WindowState)state);
+                });
             }
 
             void IAvnWindowEvents.GotInputWhenDisabled()
             {
+                PlatformExceptionHandler.Catch(() =>
+                {
                 _parent.GotInputWhenDisabled?.Invoke();
+                });
             }
         }
 

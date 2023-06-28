@@ -71,7 +71,10 @@ internal class NativePlatformSettings : DefaultPlatformSettings
         
         public void Run()
         {
+            Platform.PlatformExceptionHandler.Catch(() =>
+            {
             _settings.OnColorValuesChanged();
+            });
         }
     }
 }
