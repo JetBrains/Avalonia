@@ -62,10 +62,15 @@ namespace Avalonia.Media.Imaging
             return factory.CreateRenderTargetBitmap(size, dpi);
         }
 
-        public DrawingContext CreateDrawingContext()
+        public DrawingContext CreateDrawingContext(bool clear = true)
         {
             var platform = PlatformImpl.Item.CreateDrawingContext();
-            platform.Clear(Colors.Transparent);
+
+            if (clear)
+            {
+                platform.Clear(Colors.Transparent);
+            }
+
             return new PlatformDrawingContext(platform);
         }
 
