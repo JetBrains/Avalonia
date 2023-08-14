@@ -5,7 +5,7 @@ using Avalonia.Win32.Interop;
 
 namespace Avalonia.Win32.Input
 {
-    internal class WindowsMouseDevice : MouseDevice
+    public class WindowsMouseDevice : MouseDevice
     {
         private readonly IPointer _pointer;
 
@@ -16,7 +16,7 @@ namespace Avalonia.Win32.Input
 
         // Normally user should use IPointer.Capture instead of MouseDevice.Capture,
         // But on Windows we need to handle WM_MOUSE capture manually without having access to the Pointer. 
-        internal void Capture(IInputElement? control)
+        public void Capture(IInputElement? control)
         {
             _pointer.Capture(control);
         }

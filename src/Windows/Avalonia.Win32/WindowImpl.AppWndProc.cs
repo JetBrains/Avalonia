@@ -14,7 +14,7 @@ using static Avalonia.Win32.Interop.UnmanagedMethods;
 
 namespace Avalonia.Win32
 {
-    internal partial class WindowImpl
+    public partial class WindowImpl
     {
         private bool _killFocusRequested;
 
