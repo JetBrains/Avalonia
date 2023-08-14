@@ -10,7 +10,7 @@ using Avalonia.Utilities;
 
 namespace Avalonia.Media;
 
-internal sealed class PlatformDrawingContext : DrawingContext
+public sealed class PlatformDrawingContext : DrawingContext
 {
     private readonly IDrawingContextImpl _impl;
     private readonly bool _ownsImpl;
