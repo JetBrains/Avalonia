@@ -35,7 +35,7 @@ namespace Avalonia.Win32
     /// <summary>
     /// Window implementation for Win32 platform.
     /// </summary>
-    internal partial class WindowImpl : IWindowImpl, EglGlPlatformSurface.IEglWindowGlPlatformSurfaceInfo, IWin32OptionsTopLevelImpl
+    public partial class WindowImpl : IWindowImpl, EglGlPlatformSurface.IEglWindowGlPlatformSurfaceInfo, IWin32OptionsTopLevelImpl
     {
         private static readonly List<WindowImpl> s_instances = new();
 
