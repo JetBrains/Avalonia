@@ -66,6 +66,7 @@ namespace Avalonia.Input
 
         private static bool IsHitTestVisible(Visual visual)
         {
+            // return true;
             var element = visual as IInputElement;
             return element != null &&
                    visual.IsVisible &&

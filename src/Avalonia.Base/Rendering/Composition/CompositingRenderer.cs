@@ -126,6 +126,41 @@ internal class CompositingRenderer : IRendererWithCompositor, IHitTester
         }
     }
 
+    /// copy of HitTest(), but returns first found visual,
+    /// copied to avoid enumeration for performance reasons 
+    public Visual? HitTestFirst2(Point p, Visual? root, Func<Visual, bool>? filter)
+    {
+        CompositionVisual? rootVisual = null;
+        if (root != null)
+        {
+            if (root.CompositionVisual == null)
+                return null;
+            rootVisual = root.CompositionVisual;
+        }
+        
+        Func<CompositionVisual, bool>? f = null;
+        if (filter != null)
+            f = v =>
+            {
+                if (v is CompositionDrawListVisual dlv)
+                    return filter(dlv.Visual);
+                return true;
+            };
+
+        var res = CompositionTarget.TryHitTest(p, rootVisual, f);
+        if(res == null)
+            return null;
+        foreach(var v in res)
+        {
+            if (v is CompositionDrawListVisual dv)
+            {
+                if (filter == null || filter(dv.Visual))
+                    return dv.Visual;
+            }
+        }
+        return null;
+    }
+
     /// <inheritdoc/>
     public Visual? HitTestFirst(Point p, Visual root, Func<Visual, bool>? filter)
     {
