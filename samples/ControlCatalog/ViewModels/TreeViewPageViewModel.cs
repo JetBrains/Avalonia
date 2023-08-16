@@ -2,11 +2,17 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Controls;
+using ControlCatalog.Pages;
 using MiniMvvm;
 
 namespace ControlCatalog.ViewModels
 {
-    public class TreeViewPageViewModel : ViewModelBase
+    public interface ITreeDiagramDataSource
+    {
+        Node Root { get; }
+    }
+    
+    public class TreeViewPageViewModel : ViewModelBase, ITreeDiagramDataSource
     {
         private readonly Node _root;
         private SelectionMode _selectionMode;
@@ -21,13 +27,28 @@ namespace ControlCatalog.ViewModels
             AddItemCommand = MiniCommand.Create(AddItem);
             RemoveItemCommand = MiniCommand.Create(RemoveItem);
             SelectRandomItemCommand = MiniCommand.Create(SelectRandomItem);
+
+            void Count(ObservableCollection<Node> children)
+            {
+                foreach (var child in children)
+                {
+                    NodesCount++;
+                    Count(child.Children);
+                }
+            }
+
+            NodesCount++;
+            Count(_root.Children);
         }
 
+        public Node Root => _root;
         public ObservableCollection<Node> Items { get; }
         public ObservableCollection<Node> SelectedItems { get; }
         public MiniCommand AddItemCommand { get; }
         public MiniCommand RemoveItemCommand { get; }
         public MiniCommand SelectRandomItemCommand { get; }
+        
+        public int NodesCount { get; set; }
 
         public SelectionMode SelectionMode
         {
@@ -73,11 +94,11 @@ namespace ControlCatalog.ViewModels
             }
         }
 
+        public static readonly Random Random = new Random(10);
         private void SelectRandomItem()
         {
-            var random = new Random();
-            var depth = random.Next(4);
-            var indexes = Enumerable.Range(0, depth).Select(x => random.Next(10));
+            var depth = Random.Next(4);
+            var indexes = Enumerable.Range(0, depth).Select(x => Random.Next(10));
             var node = _root;
 
             foreach (var i in indexes)
@@ -89,35 +110,79 @@ namespace ControlCatalog.ViewModels
             SelectedItems.Add(node);
         }
 
-        public class Node
+        
+    }
+    
+    public class Node
+    {
+        private const int MaxDepth = 40;
+        private readonly int Depth;
+        private ObservableCollection<Node>? _children;
+        private int _childIndex = 10;
+
+        public Node()
         {
-            private ObservableCollection<Node>? _children;
-            private int _childIndex = 10;
+            Header = "Item";
+            
+            _children = new ObservableCollection<Node>();
 
-            public Node()
+            if (Depth < MaxDepth)
             {
-                Header = "Item";
+                int childCount = (Depth < 3) ? 1 : (Depth < 5) ? 2 : (Depth < 10) ? TreeViewPageViewModel.Random.Next(1, 2) :  TreeViewPageViewModel.Random.Next(0, 2);
+                for (int i = 0; i < childCount; i++)
+                {
+                    Children.Add(new Node(this, i, Depth + 1));
+                }
             }
+        }
 
-            public Node(Node parent, int index)
+        public Node(Node parent, int index, int depth)
+        {
+            Depth = depth;
+            Parent = parent;
+            Header = parent.Header + ' ' + index;
+            
+            _children = new ObservableCollection<Node>();
+
+            if (Depth < MaxDepth)
             {
-                Parent = parent;
-                Header = parent.Header + ' ' + index;
+                int childCount = Depth switch
+                {
+                    < 3 => 1,
+                    < 5 => 3,
+                    < 10 => 1,
+                    < 11 => TreeViewPageViewModel.Random.Next(0, 3),
+                    < 15 => TreeViewPageViewModel.Random.Next(1, 3),
+                    < 20 => 1,
+                    < 21 => 2,
+                    < 25 => TreeViewPageViewModel.Random.Next(0, 3),
+                    < 30 => TreeViewPageViewModel.Random.Next(1, 3),
+                    _ => 1
+                };
+                for (int i = 0; i < childCount; i++)
+                {
+                    Children.Add(new Node(this, i, Depth + 1));
+                }
             }
+        }
 
-            public Node? Parent { get; }
-            public string Header { get; }
-            public bool AreChildrenInitialized => _children != null;
-            public ObservableCollection<Node> Children => _children ??= CreateChildren();
-            public void AddItem() => Children.Add(new Node(this, _childIndex++));
-            public void RemoveItem(Node child) => Children.Remove(child);
-            public override string ToString() => Header;
+        public Control Control { get; set; }
+        // public SunburstItem SunburstItem => Control as SunburstItem;
+        
+        public Node? Parent { get; }
+        public string Header { get; }
+        public bool AreChildrenInitialized => _children != null;
+        public ObservableCollection<Node> Children => _children ??= CreateChildren();
+        public void AddItem() => Children.Add(new Node(this, _childIndex++, Depth + 1));
+        public void RemoveItem(Node child) => Children.Remove(child);
+        public override string ToString() => Header;
 
-            private ObservableCollection<Node> CreateChildren()
-            {
-                return new ObservableCollection<Node>(
-                    Enumerable.Range(0, 10).Select(i => new Node(this, i)));
-            }
+        private ObservableCollection<Node> CreateChildren()
+        {
+            if (Depth > 20)
+                return new ObservableCollection<Node>();
+            var r = new Random();
+            return new ObservableCollection<Node>(Enumerable.Range(0, r.Next(1, 3)).Select(i => new Node(this, i, Depth + 1)));
         }
     }
 }

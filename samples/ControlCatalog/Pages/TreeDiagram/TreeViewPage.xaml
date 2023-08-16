@@ -1,0 +1,102 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:viewModels="using:ControlCatalog.ViewModels"
+             xmlns:pages="clr-namespace:ControlCatalog.Pages"
+             x:Class="ControlCatalog.Pages.TreeViewPage"
+             x:DataType="viewModels:TreeViewPageViewModel">
+
+  <UserControl.Resources>
+    <pages:ColorPaletteConverter x:Key="ColorPalette" />
+  </UserControl.Resources>
+  <Grid RowDefinitions="Auto,*,Auto,Auto,Auto,Auto">
+    
+    <Grid.Styles>
+      
+      <Style Selector="Rectangle.rect">
+        <Style.Setters>
+          <Setter Property="Fill" Value="Blue"/>
+          <Setter Property="Margin" Value="1 1"/>
+        </Style.Setters>
+      </Style>
+      <Style Selector="Rectangle.rect:pointerover">
+        <Style.Setters>
+          <Setter Property="Fill" Value="Red"/>
+          <Setter Property="Margin" Value="1 1"/>
+        </Style.Setters>
+      </Style>
+      
+      <Style Selector="pages|TreeDiagramItem pages|FastPath#PART_Path">
+        <Style.Setters>
+          <Setter Property="Fill" Value="{Binding $parent[pages:TreeDiagramItem].TreeLevel, Converter={StaticResource ColorPalette}}"/>
+          <Setter Property="Stroke" Value="White"/>
+          <Setter Property="StrokeThickness" Value="0.5"/>
+        </Style.Setters>
+      </Style>
+      
+      <Style Selector="pages|TreeDiagramItem pages|FastPath#PART_Path:pointerover">
+        <Style.Setters>
+          <Setter Property="Fill" Value="Red"/>
+          <Setter Property="Stroke" Value="White"/>
+          <Setter Property="StrokeThickness" Value="0.5"/>
+        </Style.Setters>
+      </Style>
+      
+      <Style Selector="pages|TreeDiagramItem">
+        <Setter Property="ClipToBounds" Value="False"/>
+        <Setter Property="Template">
+          <ControlTemplate>
+            <pages:FastPath Name="PART_Path"/>
+          </ControlTemplate>
+        </Setter>
+      </Style>
+      
+    </Grid.Styles>
+    
+    <pages:SunburstPanel Grid.Row="1" 
+                         Name="SunburstPanel"
+                         DataSource="{Binding}" 
+                         HorizontalAlignment="Stretch"
+                         MaxAngle="{Binding #Slider.Value}"/>
+    
+    <!-- <Grid ColumnDefinitions="*,*" Grid.Row="1"> -->
+    <!--    -->
+    <!--   <pages:IciclePanel Grid.Column="0"   -->
+    <!--                      Name="IciclePanel" -->
+    <!--                      DataSource="{Binding}" -->
+    <!--                      IsVisible="{Binding !#ToggleButton.IsChecked}"  -->
+    <!--                      HorizontalAlignment="Stretch" -->
+    <!--                      PointerMoved="IciclePanel_OnPointerMoved" -->
+    <!--                      PointerEntered="IciclePanel_OnPointerEntered" -->
+    <!--                      PointerExited="IciclePanel_OnPointerExited"/> -->
+    <!--    -->
+    <!--   <Canvas Grid.Column="0" IsHitTestVisible="False"> -->
+    <!--     <Ellipse Name="Pointer1" Width="10" Height="10" Fill="Chartreuse" IsHitTestVisible="False" /> -->
+    <!--   </Canvas> -->
+    <!--    -->
+    <!--   <pages:SunburstPanel Grid.Column="1"  -->
+    <!--                        Name="SunburstPanel" -->
+    <!--                        DataSource="{Binding}"  -->
+    <!--                        IsVisible="{Binding !#ToggleButton.IsChecked}"  -->
+    <!--                        HorizontalAlignment="Stretch" -->
+    <!--                        MaxAngle="{Binding #Slider.Value}" -->
+    <!--                        PointerMoved="SunburstPanel_OnPointerMoved"/> -->
+    <!--    -->
+    <!--   <Canvas Grid.Column="1" IsHitTestVisible="False"> -->
+    <!--     <Ellipse Name="Pointer2" Width="10" Height="10" Fill="Gold" IsHitTestVisible="False" /> -->
+    <!--   </Canvas> -->
+    <!--    -->
+    <!--   ~1~ <pages:IcicleCanvas IsVisible="{Binding !#ToggleButton.IsChecked}" Grid.Row="1" HorizontalAlignment="Stretch"/> @1@ -->
+    <!--   ~1~ <pages:SunburstControl Name="SunburstControl" IsVisible="{Binding #ToggleButton.IsChecked}" Grid.Row="1" HorizontalAlignment="Stretch" Margin="300 300 0 0" @1@ -->
+    <!--   ~1~                        MaxAngle="{Binding #Slider.Value}"/> @1@ -->
+    <!-- -->
+    <!-- </Grid> -->
+    
+    <StackPanel Grid.Row="2" Spacing="4">
+      <ToggleButton Name="ToggleButton">Toggle Tree</ToggleButton>
+      <Slider Name="Slider" Minimum="0" Maximum="360" Value="360" ></Slider>
+      
+      <TextBlock Text="{Binding NodesCount}" />
+    </StackPanel>
+      
+  </Grid>
+</UserControl>
