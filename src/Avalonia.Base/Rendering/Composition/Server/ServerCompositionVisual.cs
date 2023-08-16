@@ -35,6 +35,8 @@ namespace Avalonia.Rendering.Composition.Server
             if (Opacity == 0)
                 return;
 
+            // now we are Handling the case where 'ClipToBounds' is false, yet 'Clip' is not null. 
+            // this will speed up rendering after Invalidate individual visual 
             currentTransformedClip = currentTransformedClip.Intersect(_combinedTransformedClipBounds);
             if (currentTransformedClip.Width == 0 && currentTransformedClip.Height == 0)
                 return;
@@ -190,6 +192,8 @@ namespace Avalonia.Rendering.Composition.Server
                 if (ClipToBounds)
                     transformedVisualBounds = new Rect(new Size(Size.X, Size.Y)).TransformToAABB(GlobalTransformMatrix);
                 
+                // Handle the case where 'ClipToBounds' is false, yet 'Clip' is not null.
+                // In this scenario, we utilize 'Clip.Bounds'.
                  if (Clip != null)
                      transformedClipBounds = Clip.Bounds.TransformToAABB(GlobalTransformMatrix);
 
@@ -298,6 +302,8 @@ namespace Avalonia.Rendering.Composition.Server
         protected virtual void OnAttachedToRoot(ServerCompositionTarget target)
         {
         }
+
+        public virtual bool IsDirtyForUpdate => _isDirtyForUpdate;
 
         protected override void ValuesInvalidated()
         {
