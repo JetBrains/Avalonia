@@ -104,6 +104,14 @@ namespace Avalonia.Rendering.Composition
 
             if (visual.Clip?.FillContains(point) == false)
                 return;
+
+            if (visual is CompositionDrawListVisual { Visual: ICustomHitTest2 customHitTest })
+            {
+                var visualChild = customHitTest.GetVisualAt(point, null);
+                if (visualChild?.CompositionVisual != null)
+                    result.Add(visualChild.CompositionVisual);
+                return;
+            }
             
             // Inspect children
             if (visual is CompositionContainerVisual cv)

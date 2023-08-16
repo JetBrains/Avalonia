@@ -308,6 +308,9 @@ namespace Avalonia.VisualTree
 
             if (rootPoint.HasValue)
             {
+                if (visual is ICustomHitTest2 customHitTest)
+                    return customHitTest.GetVisualAt(rootPoint.Value, filter);
+
                 return root.HitTester.HitTestFirst(rootPoint.Value, visual, filter);
             }
 
