@@ -370,5 +370,8 @@ namespace Avalonia.OpenGL
                 return rv;
             });
         }
+        
+        [GetProcAddress("glReadPixels")]
+        public partial void ReadPixels(int x, int y, int width, int height, int format, int type, IntPtr data);
     }
 }
