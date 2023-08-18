@@ -171,6 +171,19 @@ namespace ControlCatalog.Pages
             {
                 new DecoratedWindow().Show();
             };
+            this.Get<Button>("SizeToContentWindow").Click += delegate
+            {
+                new Window()
+                {
+                    SizeToContent = SizeToContent.WidthAndHeight,
+                    Content = 
+                        new Expander()
+                        {
+                            Header = "Expand me",
+                            Content = "\n            this.Get<Button>(\"DecoratedWindowDialog\").Click += delegate\n            {\n                _ = new DecoratedWindow().ShowDialog(GetWindow());\n            };"
+                        }
+                }.Show();
+            };
             this.Get<Button>("DecoratedWindowDialog").Click += delegate
             {
                 _ = new DecoratedWindow().ShowDialog(GetWindow());

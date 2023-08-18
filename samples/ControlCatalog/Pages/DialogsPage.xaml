@@ -17,6 +17,7 @@
         <Button Name="DialogNoTaskbar">Dialog (_No taskbar icon)</Button>
         <Button Name="OwnedWindow">Own_ed window</Button>
         <Button Name="OwnedWindowNoTaskbar">Owned window (No tas_kbar icon)</Button>
+        <Button Name="SizeToContentWindow">SizeToContent window</Button>
       </StackPanel>
     </Expander>
 

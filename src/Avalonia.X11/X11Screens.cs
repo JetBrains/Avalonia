@@ -310,6 +310,8 @@ namespace Avalonia.X11
                 Scaling = scaling.Value;
                 PhysicalSize = physicalSize;
             }
+
+            Scaling = 2;
         }
 
         public static double GuessPixelDensity(PixelRect pixel, Size physical)
