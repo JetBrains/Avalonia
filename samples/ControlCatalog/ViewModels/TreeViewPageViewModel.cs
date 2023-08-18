@@ -115,7 +115,7 @@ namespace ControlCatalog.ViewModels
     
     public class Node
     {
-        private const int MaxDepth = 40;
+        private const int MaxDepth = 25;
         private readonly int Depth;
         private ObservableCollection<Node>? _children;
         private int _childIndex = 10;
