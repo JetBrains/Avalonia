@@ -5,7 +5,7 @@ using Avalonia.Win32.Interop;
 
 namespace Avalonia.Win32.Input
 {
-    internal class WindowsMouseDevice : MouseDevice
+    public class WindowsMouseDevice : MouseDevice
     {
         private readonly IPointer _pointer;
 
