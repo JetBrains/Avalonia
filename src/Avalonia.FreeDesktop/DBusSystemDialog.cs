@@ -156,7 +156,7 @@ namespace Avalonia.FreeDesktop
             if (fileTypes is null)
                 return null;
 
-            var filters = new DBusArrayItem(DBusType.Struct, new List<DBusItem>());
+            var filters = new List<DBusItem>();
 
             foreach (var fileType in fileTypes)
             {
@@ -180,7 +180,7 @@ namespace Avalonia.FreeDesktop
                     }));
             }
 
-            return filters.Count > 0 ? new DBusVariantItem("a(sa(us))", filters) : null;
+            return filters.Count > 0 ? new DBusVariantItem("a(sa(us))", new DBusArrayItem(DBusType.Struct, filters)) : null;
         }
     }
 }
