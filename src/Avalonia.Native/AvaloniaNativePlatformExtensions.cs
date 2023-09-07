@@ -80,6 +80,8 @@ namespace Avalonia
         /// and make your Avalonia app run with it. The default value is null.
         /// </summary>
         public string AvaloniaNativeLibraryPath { get; set; }
+
+        public bool ShouldRenderOnUIThread { get; set; }
     }
 
     // ReSharper disable once InconsistentNaming
