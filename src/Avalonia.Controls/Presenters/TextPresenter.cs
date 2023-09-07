@@ -447,15 +447,6 @@ namespace Avalonia.Controls.Presenters
             var y = Math.Floor(_caretBounds.Y) + 0.5;
             var b = Math.Ceiling(_caretBounds.Bottom) - 0.5;
 
-            var caretIndex = _lastCharacterHit.FirstCharacterIndex + _lastCharacterHit.TrailingLength;
-            var lineIndex = TextLayout.GetLineIndexFromCharacterIndex(caretIndex, _lastCharacterHit.TrailingLength > 0);
-            var textLine = TextLayout.TextLines[lineIndex];
-
-            if (_caretBounds.X > 0 && _caretBounds.X >= textLine.WidthIncludingTrailingWhitespace)
-            {
-                x -= 1;
-            }
-
             return (new Point(x, y), new Point(x, b));
         }
 
@@ -617,6 +608,15 @@ namespace Avalonia.Controls.Presenters
             InvalidateArrange();
 
             var textWidth = TextLayout.OverhangLeading + TextLayout.WidthIncludingTrailingWhitespace + TextLayout.OverhangTrailing;
+
+            var caretIndex = _lastCharacterHit.FirstCharacterIndex + _lastCharacterHit.TrailingLength;
+            var lineIndex = TextLayout.GetLineIndexFromCharacterIndex(caretIndex, _lastCharacterHit.TrailingLength > 0);
+            var textLine = TextLayout.TextLines[lineIndex];
+
+            if (_caretBounds.X > 0 && _caretBounds.X >= textLine.WidthIncludingTrailingWhitespace)
+            {
+                textWidth += 1;
+            }
 
             return new Size(textWidth, TextLayout.Height);
         }
