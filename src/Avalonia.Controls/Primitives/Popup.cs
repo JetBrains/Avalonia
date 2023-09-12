@@ -404,8 +404,8 @@ namespace Avalonia.Controls.Primitives
             popupHost.BindConstraints(this, WidthProperty, MinWidthProperty, MaxWidthProperty,
                 HeightProperty, MinHeightProperty, MaxHeightProperty, TopmostProperty).DisposeWith(handlerCleanup);
 
-            popupHost.SetChild(Child);
             ((ISetLogicalParent)popupHost).SetParent(this);
+            popupHost.SetChild(Child);
 
             popupHost.ConfigurePosition(
                 placementTarget,
