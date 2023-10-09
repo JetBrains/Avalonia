@@ -37,6 +37,9 @@ namespace Avalonia.Rendering.Composition.Server
             if (currentTransformedClip.Width == 0 && currentTransformedClip.Height == 0)
                 return;
 
+            if (Size.X > currentTransformedClip.Width || Size.Y > currentTransformedClip.Height || Offset.X < 0 || Offset.Y < 0)
+                currentTransformedClip = currentTransformedClip.WithWidth(Size.X).WithHeight(Size.Y).WithX(currentTransformedClip.X + Offset.X).WithY(currentTransformedClip.Y + Offset.Y);
+
             Root!.RenderedVisuals++;
             Root!.DebugEvents?.IncrementRenderedVisuals();
 
