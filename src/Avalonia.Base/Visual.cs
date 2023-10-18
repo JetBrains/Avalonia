@@ -676,9 +676,9 @@ namespace Avalonia
             var old = _visualParent;
             _visualParent = value;
 
-            if (_visualRoot != null)
+            if (_visualRoot != null && old != null)
             {
-                var e = new VisualTreeAttachmentEventArgs(old!, _visualRoot);
+                var e = new VisualTreeAttachmentEventArgs(old, _visualRoot);
                 OnDetachedFromVisualTreeCore(e);
             }
 
