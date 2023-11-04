@@ -58,6 +58,8 @@ namespace Avalonia.FreeDesktop
             if (filters is not null)
                 chooserOptions.Add("filters", filters);
 
+            if (options.SuggestedStartLocation?.TryGetLocalPath()  is { } folderPath)
+                chooserOptions.Add("current_folder", new DBusVariantItem("ay", new DBusArrayItem(DBusType.Byte, Encoding.UTF8.GetBytes(folderPath + "\0").Select(static x => new DBusByteItem(x)))));
             chooserOptions.Add("multiple", new DBusVariantItem("b", new DBusBoolItem(options.AllowMultiple)));
 
             objectPath = await _fileChooser.OpenFileAsync(parentWindow, options.Title ?? string.Empty, chooserOptions);
