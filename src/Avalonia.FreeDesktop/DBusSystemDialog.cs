@@ -20,27 +20,30 @@ namespace Avalonia.FreeDesktop
                 return null;
 
             var dbusFileChooser = new OrgFreedesktopPortalFileChooser(DBusHelper.Connection, "org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop");
+            uint version = 0;
             try
             {
-                await dbusFileChooser.GetVersionPropertyAsync();
+                version = await dbusFileChooser.GetVersionPropertyAsync();
             }
             catch
             {
                 return null;
             }
 
-            return new DBusSystemDialog(DBusHelper.Connection, handle, dbusFileChooser);
+            return new DBusSystemDialog(DBusHelper.Connection, handle, dbusFileChooser, version);
         }
 
         private readonly Connection _connection;
         private readonly OrgFreedesktopPortalFileChooser _fileChooser;
         private readonly IPlatformHandle _handle;
+        private readonly uint _version;
 
-        private DBusSystemDialog(Connection connection, IPlatformHandle handle, OrgFreedesktopPortalFileChooser fileChooser)
+        private DBusSystemDialog(Connection connection, IPlatformHandle handle, OrgFreedesktopPortalFileChooser fileChooser, uint version)
         {
             _connection = connection;
             _fileChooser = fileChooser;
             _handle = handle;
+            _version = version;
         }
 
         public override bool CanOpen => true;
@@ -58,7 +61,7 @@ namespace Avalonia.FreeDesktop
             if (filters is not null)
                 chooserOptions.Add("filters", filters);
 
-            if (options.SuggestedStartLocation?.TryGetLocalPath()  is { } folderPath)
+            if (options.SuggestedStartLocation?.TryGetLocalPath()  is { } folderPath && _version >= 4)
                 chooserOptions.Add("current_folder", new DBusVariantItem("ay", new DBusArrayItem(DBusType.Byte, Encoding.UTF8.GetBytes(folderPath + "\0").Select(static x => new DBusByteItem(x)))));
             chooserOptions.Add("multiple", new DBusVariantItem("b", new DBusBoolItem(options.AllowMultiple)));
 
