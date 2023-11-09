@@ -41,7 +41,7 @@ namespace Avalonia.Skia
 
                 var font = ((GlyphTypefaceImpl)typeface).Font;
 
-                font.Shape(buffer);
+                font.Shape(buffer, Feature.Parse("+tnum"), Feature.Parse("-calt"));
 
                 if (buffer.Direction == Direction.RightToLeft)
                 {
