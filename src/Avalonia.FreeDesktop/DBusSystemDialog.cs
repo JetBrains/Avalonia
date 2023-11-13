@@ -23,10 +23,7 @@ namespace Avalonia.FreeDesktop
             uint version = 0;
             try
             {
-                await dbusFileChooser.GetVersionPropertyAsync();
-                // GetVersionPropertyAsync incorrectly reads response, so it reads signature instead version, GetAllProperties reads signature and value correctly.
-                var props = await dbusFileChooser.GetAllPropertiesAsync();
-                version = props.version;
+                version = await dbusFileChooser.GetVersionPropertyAsync();
             }
             catch
             {
