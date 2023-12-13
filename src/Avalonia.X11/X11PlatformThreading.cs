@@ -21,6 +21,7 @@ namespace Avalonia.X11
     {
         public static IntPtr Display => (AvaloniaLocator.Current.GetService<IWindowingPlatform>() as AvaloniaX11Platform)?.Display ?? IntPtr.Zero;
         public static IntPtr DeferredDisplay => (AvaloniaLocator.Current.GetService<IWindowingPlatform>() as AvaloniaX11Platform)?.DeferredDisplay ?? IntPtr.Zero;
+        public static int? XIOpcode => AvaloniaLocator.Current.GetService<IWindowingPlatform>() is  AvaloniaX11Platform p && p.XI2 != null ? p.Info.XInputOpcode : null;
 
         public static (int x, int y) GetCursorPos() => XLib.GetCursorPos((AvaloniaLocator.Current.GetService<IWindowingPlatform>() as AvaloniaX11Platform)?.Info);
 
