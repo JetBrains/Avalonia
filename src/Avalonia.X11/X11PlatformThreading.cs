@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -9,7 +10,7 @@ using static Avalonia.X11.XLib;
 
 namespace Avalonia.X11
 {
-    public class X11EventArgs : EventArgs
+    public class X11EventArgs : CancelEventArgs
     {
         public IntPtr XEvent { get; }
 
@@ -25,7 +26,12 @@ namespace Avalonia.X11
 
         public static event EventHandler<X11EventArgs> XEvent;
 
-        internal static void OnXEvent(object sender, IntPtr xEvent) => XEvent?.Invoke(sender, new X11EventArgs(xEvent));
+        internal static bool OnXEvent(object sender, IntPtr xEvent)
+        {
+            var args = new X11EventArgs(xEvent);
+            XEvent?.Invoke(sender, args);
+            return !args.Cancel;
+        }
 
         public static void RefreshScreenInfo()
         {
@@ -168,6 +174,9 @@ namespace Avalonia.X11
                     XGetEventData(_display, &xev.GenericEventCookie);
                 try
                 {
+                    if (!X11Tools.OnXEvent(this, (IntPtr)(&xev)))
+                        return;
+
                     if (xev.type == XEventName.GenericEvent)
                     {
                         if (_platform.XI2 != null && _platform.Info.XInputOpcode ==
