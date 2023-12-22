@@ -2093,7 +2093,7 @@ namespace Avalonia.Controls
                 {
                     var fontSize = FontSize;
                     var typeface = new Typeface(FontFamily, FontStyle, FontWeight, FontStretch);
-                    var paragraphProperties = TextLayout.CreateTextParagraphProperties(typeface, fontSize, null, default, default, null, default, LineHeight, default);
+                    var paragraphProperties = TextLayout.CreateTextParagraphProperties(typeface, fontSize, null, default, default, null, default, LineHeight, default, FontFeatures);
                     var textLayout = new TextLayout(new MaxLinesTextSource(MaxLines), paragraphProperties);
                     var verticalSpace = GetVerticalSpaceBetweenScrollViewerAndPresenter();
 
