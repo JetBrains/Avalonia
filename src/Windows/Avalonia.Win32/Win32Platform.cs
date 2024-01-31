@@ -180,7 +180,7 @@ namespace Avalonia.Win32
         private void CreateMessageWindow()
         {
             // Ensure that the delegate doesn't get garbage collected by storing it as a field.
-            _wndProcDelegate = WndProc;
+            _wndProcDelegate = SafeWndProc.WndProc(WndProc);
 
             WNDCLASSEX wndClassEx = new WNDCLASSEX
             {
