@@ -8,7 +8,7 @@ using Avalonia.Controls.Primitives;
 
 namespace Avalonia.Native.Interop
 {
-    class MenuEvents : NativeCallbackBase, IAvnMenuEvents
+    partial class MenuEvents : NativeCallbackBase, IAvnMenuEvents
     {
         private IAvnMenu _parent;
 

@@ -908,7 +908,7 @@ namespace Avalonia.Win32
         private void CreateWindow()
         {
             // Ensure that the delegate doesn't get garbage collected by storing it as a field.
-            _wndProcDelegate = WndProcMessageHandler;
+            _wndProcDelegate = SafeWndProc.WndProc(WndProcMessageHandler);
 
             _className = $"Avalonia-{Guid.NewGuid().ToString()}";
 

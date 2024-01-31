@@ -3,7 +3,7 @@ using Avalonia.Native.Interop;
 
 namespace Avalonia.Native
 {
-    internal class MenuActionCallback : NativeCallbackBase, IAvnActionCallback
+    internal partial class MenuActionCallback : NativeCallbackBase, IAvnActionCallback
     {
         private Action _action;
 
@@ -12,7 +12,7 @@ namespace Avalonia.Native
             _action = action;
         }
 
-        void IAvnActionCallback.Run()
+        void /*IAvnActionCallback.*/Run()
         {
             _action?.Invoke();
         }
