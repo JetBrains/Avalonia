@@ -6,11 +6,11 @@ using Avalonia.Platform;
 
 namespace Avalonia.Native
 {
-    internal class AvaloniaNativeApplicationPlatform : NativeCallbackBase, IAvnApplicationEvents, IPlatformLifetimeEventsImpl
+    internal partial class AvaloniaNativeApplicationPlatform : NativeCallbackBase, IAvnApplicationEvents, IPlatformLifetimeEventsImpl
     {
         public event EventHandler<ShutdownRequestedEventArgs> ShutdownRequested;
         
-        void IAvnApplicationEvents.FilesOpened(IAvnStringArray urls)
+        void /*IAvnApplicationEvents.*/FilesOpened(IAvnStringArray urls)
         {
             ((IApplicationPlatformEvents)Application.Current).RaiseUrlsOpened(urls.ToStringArray());
         }
@@ -32,7 +32,7 @@ namespace Avalonia.Native
             }
         }
 
-        void IAvnApplicationEvents.OnReopen()
+        void /*IAvnApplicationEvents.*/OnReopen()
         {
             if (Application.Current?.ApplicationLifetime is MacOSClassicDesktopStyleApplicationLifetime lifetime)
             {
@@ -40,7 +40,7 @@ namespace Avalonia.Native
             }
         }
 
-        void IAvnApplicationEvents.OnHide()
+        void /*IAvnApplicationEvents.*/OnHide()
         {
             if (Application.Current?.ApplicationLifetime is MacOSClassicDesktopStyleApplicationLifetime lifetime)
             {
@@ -48,7 +48,7 @@ namespace Avalonia.Native
             }
         }
 
-        void IAvnApplicationEvents.OnUnhide()
+        void /*IAvnApplicationEvents.*/OnUnhide()
         {
             if (Application.Current?.ApplicationLifetime is MacOSClassicDesktopStyleApplicationLifetime lifetime)
             {
