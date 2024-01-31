@@ -184,6 +184,11 @@ namespace Avalonia.X11
                     else if (_eventHandlers.TryGetValue(xev.AnyEvent.window, out var handler))
                         handler(ref xev);
                 }
+                catch (Exception e)
+                {
+                    if (!PlatformExceptionHandler.ShouldSuppress(this, e))
+                        throw;
+                }
                 finally
                 {
                     if (xev.type == XEventName.GenericEvent && xev.GenericEventCookie.data != null)
@@ -234,7 +239,9 @@ namespace Avalonia.X11
                 while (_platform.EventGrouperDispatchQueue.HasJobs)
                 {
                     CheckSignaled();
+                    PlatformExceptionHandler.Catch(() => {
                     _platform.EventGrouperDispatchQueue.DispatchNext();
+                    });
                 }
             }
         }
