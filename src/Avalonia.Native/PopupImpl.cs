@@ -6,7 +6,7 @@ using Avalonia.Platform;
 
 namespace Avalonia.Native
 {
-    class PopupImpl : WindowBaseImpl, IPopupImpl
+    partial class PopupImpl : WindowBaseImpl, IPopupImpl
     {
         private readonly IWindowBaseImpl _parent;
 
@@ -28,7 +28,7 @@ namespace Avalonia.Native
             //TODO: We ignore the scaling override for now
         }
 
-        class PopupEvents : WindowBaseEvents, IAvnWindowEvents
+        partial class PopupEvents : WindowBaseEvents, IAvnWindowEvents
         {
             readonly PopupImpl _parent;
 
@@ -42,12 +42,12 @@ namespace Avalonia.Native
                 // NOP on Popup
             }
 
-            int IAvnWindowEvents.Closing()
+            int /*IAvnWindowEvents.*/Closing()
             {
                 return true.AsComBool();
             }
 
-            void IAvnWindowEvents.WindowStateChanged(AvnWindowState state)
+            void /*IAvnWindowEvents.*/WindowStateChanged(AvnWindowState state)
             {
             }
         }

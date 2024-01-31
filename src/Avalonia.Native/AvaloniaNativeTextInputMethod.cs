@@ -7,7 +7,7 @@ using Avalonia.Native.Interop;
 
 namespace Avalonia.Native
 {
-    internal class AvaloniaNativeTextInputMethod : ITextInputMethodImpl, IDisposable
+    internal partial class AvaloniaNativeTextInputMethod : ITextInputMethodImpl, IDisposable
     {
         private TextInputMethodClient? _client;
         private IAvnTextInputMethodClient? _nativeClient;
@@ -116,7 +116,7 @@ namespace Avalonia.Native
            
         }
 
-        private class AvnTextInputMethodClient : NativeCallbackBase, IAvnTextInputMethodClient
+        private partial class AvnTextInputMethodClient : NativeCallbackBase, IAvnTextInputMethodClient
         {
             private readonly TextInputMethodClient _client;
 

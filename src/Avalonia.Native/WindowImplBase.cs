@@ -47,7 +47,7 @@ namespace Avalonia.Native
         }
     }
 
-    internal abstract class WindowBaseImpl : IWindowBaseImpl,
+    internal abstract partial class WindowBaseImpl : IWindowBaseImpl,
         IFramebufferPlatformSurface
     {
         protected readonly IAvaloniaNativeFactory _factory;
@@ -192,7 +192,7 @@ namespace Avalonia.Native
             return _inputRoot is Control c ? ControlAutomationPeer.CreatePeerForElement(c) : null;
         }
 
-        protected unsafe class WindowBaseEvents : NativeCallbackBase, IAvnWindowBaseEvents
+        protected unsafe partial class WindowBaseEvents : NativeCallbackBase, IAvnWindowBaseEvents
         {
             private readonly WindowBaseImpl _parent;
 
@@ -201,7 +201,7 @@ namespace Avalonia.Native
                 _parent = parent;
             }
 
-            void IAvnWindowBaseEvents.Closed()
+            public void /*IAvnWindowBaseEvents.*/Closed()
             {
                 var n = _parent._native;
                 try
@@ -216,18 +216,18 @@ namespace Avalonia.Native
                 }
             }
 
-            void IAvnWindowBaseEvents.Activated() => _parent.Activated?.Invoke();
+            public void /*IAvnWindowBaseEvents.*/Activated() => _parent.Activated?.Invoke();
 
-            void IAvnWindowBaseEvents.Deactivated() => _parent.Deactivated?.Invoke();
+            public void /*IAvnWindowBaseEvents.*/Deactivated() => _parent.Deactivated?.Invoke();
 
-            void IAvnWindowBaseEvents.Paint()
+            public void /*IAvnWindowBaseEvents.*/Paint()
             {
                 Dispatcher.UIThread.RunJobs(DispatcherPriority.UiThreadRender);
                 var s = _parent.ClientSize;
                 _parent.Paint?.Invoke(new Rect(0, 0, s.Width, s.Height));
             }
 
-            void IAvnWindowBaseEvents.Resized(AvnSize* size, AvnPlatformResizeReason reason)
+            public void /*IAvnWindowBaseEvents.*/Resized(AvnSize* size, AvnPlatformResizeReason reason)
             {
                 if (_parent?._native != null)
                 {
@@ -237,38 +237,38 @@ namespace Avalonia.Native
                 }
             }
 
-            void IAvnWindowBaseEvents.PositionChanged(AvnPoint position)
+            public void /*IAvnWindowBaseEvents.*/PositionChanged(AvnPoint position)
             {
                 _parent.PositionChanged?.Invoke(position.ToAvaloniaPixelPoint());
             }
 
-            void IAvnWindowBaseEvents.RawMouseEvent(AvnRawMouseEventType type, ulong timeStamp, AvnInputModifiers modifiers, AvnPoint point, AvnVector delta)
+            public void /*IAvnWindowBaseEvents.*/RawMouseEvent(AvnRawMouseEventType type, ulong timeStamp, AvnInputModifiers modifiers, AvnPoint point, AvnVector delta)
             {
                 _parent.RawMouseEvent(type, timeStamp, modifiers, point, delta);
             }
 
-            int IAvnWindowBaseEvents.RawKeyEvent(AvnRawKeyEventType type, ulong timeStamp, AvnInputModifiers modifiers, AvnKey key, AvnPhysicalKey physicalKey, string keySymbol)
+            public int /*IAvnWindowBaseEvents.*/RawKeyEvent(AvnRawKeyEventType type, ulong timeStamp, AvnInputModifiers modifiers, AvnKey key, AvnPhysicalKey physicalKey, string keySymbol)
             {
                 return _parent.RawKeyEvent(type, timeStamp, modifiers, key, physicalKey, keySymbol).AsComBool();
             }
 
-            int IAvnWindowBaseEvents.RawTextInputEvent(ulong timeStamp, string text)
+            public int /*IAvnWindowBaseEvents.*/RawTextInputEvent(ulong timeStamp, string text)
             {
                 return _parent.RawTextInputEvent(timeStamp, text).AsComBool();
             }
 
-            void IAvnWindowBaseEvents.ScalingChanged(double scaling)
+            public void /*IAvnWindowBaseEvents.*/ScalingChanged(double scaling)
             {
                 _parent._savedScaling = scaling;
                 _parent.ScalingChanged?.Invoke(scaling);
             }
 
-            void IAvnWindowBaseEvents.RunRenderPriorityJobs()
+            public void /*IAvnWindowBaseEvents.*/RunRenderPriorityJobs()
             {
                 Dispatcher.UIThread.RunJobs(DispatcherPriority.UiThreadRender);
             }
             
-            void IAvnWindowBaseEvents.LostFocus()
+            public void /*IAvnWindowBaseEvents.*/LostFocus()
             {
                 _parent.LostFocus?.Invoke();
             }
@@ -297,7 +297,7 @@ namespace Avalonia.Native
                 }
             }
 
-            IAvnAutomationPeer IAvnWindowBaseEvents.AutomationPeer
+            public IAvnAutomationPeer /*IAvnWindowBaseEvents.*/AutomationPeer
             {
                 get => AvnAutomationPeer.Wrap(_parent.GetAutomationPeer());
             }

@@ -8,7 +8,7 @@ using Avalonia.Native.Interop;
 
 namespace Avalonia.Native
 {
-    class AvaloniaNativeDragSource : IPlatformDragSource
+    partial class AvaloniaNativeDragSource : IPlatformDragSource
     {
         private readonly IAvaloniaNativeFactory _factory;
 
@@ -17,7 +17,7 @@ namespace Avalonia.Native
             _factory = factory;
         }
 
-        class DndCallback : NativeCallbackBase, IAvnDndResultCallback
+        partial class DndCallback : NativeCallbackBase, IAvnDndResultCallback
         {
             private TaskCompletionSource<DragDropEffects> _tcs;
 

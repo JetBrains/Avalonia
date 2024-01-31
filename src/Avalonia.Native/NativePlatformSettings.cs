@@ -5,7 +5,7 @@ using Avalonia.Platform;
 
 namespace Avalonia.Native;
 
-internal class NativePlatformSettings : DefaultPlatformSettings
+internal partial class NativePlatformSettings : DefaultPlatformSettings
 {
     private readonly IAvnPlatformSettings _platformSettings;
     private PlatformColorValues _lastColorValues;
@@ -60,7 +60,7 @@ internal class NativePlatformSettings : DefaultPlatformSettings
         }
     }
 
-    private class ColorsChangeCallback : NativeCallbackBase, IAvnActionCallback
+    private partial class ColorsChangeCallback : NativeCallbackBase, IAvnActionCallback
     {
         private readonly NativePlatformSettings _settings;
 
