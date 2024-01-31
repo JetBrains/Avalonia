@@ -12,7 +12,7 @@ using Avalonia.Platform.Interop;
 
 namespace Avalonia.Native
 {
-    internal class WindowImpl : WindowBaseImpl, IWindowImpl
+    internal partial class WindowImpl : WindowBaseImpl, IWindowImpl
     {
         private readonly AvaloniaNativePlatformOptions _opts;
         private readonly AvaloniaNativeGlPlatformGraphics _graphics;
@@ -38,7 +38,7 @@ namespace Avalonia.Native
             _inputMethod = new AvaloniaNativeTextInputMethod(_native);
         }
 
-        class WindowEvents : WindowBaseEvents, IAvnWindowEvents
+        partial class WindowEvents : WindowBaseEvents, IAvnWindowEvents
         {
             readonly WindowImpl _parent;
 
@@ -47,7 +47,7 @@ namespace Avalonia.Native
                 _parent = parent;
             }
 
-            int IAvnWindowEvents.Closing()
+            int /*IAvnWindowEvents.*/Closing()
             {
                 if (_parent.Closing != null)
                 {
@@ -57,14 +57,14 @@ namespace Avalonia.Native
                 return true.AsComBool();
             }
 
-            void IAvnWindowEvents.WindowStateChanged(AvnWindowState state)
+            void /*IAvnWindowEvents.*/WindowStateChanged(AvnWindowState state)
             {
                 _parent.InvalidateExtendedMargins();
 
                 _parent.WindowStateChanged?.Invoke((WindowState)state);
             }
 
-            void IAvnWindowEvents.GotInputWhenDisabled()
+            void /*IAvnWindowEvents.*/GotInputWhenDisabled()
             {
                 _parent.GotInputWhenDisabled?.Invoke();
             }
