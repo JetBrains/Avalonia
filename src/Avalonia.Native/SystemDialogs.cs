@@ -84,7 +84,7 @@ namespace Avalonia.Native
         }
     }
 
-    internal class FilePickerFileTypesWrapper : NativeCallbackBase, IAvnFilePickerFileTypes
+    internal partial class FilePickerFileTypesWrapper : NativeCallbackBase, IAvnFilePickerFileTypes
     {
         private readonly IReadOnlyList<FilePickerFileType>? _types;
         private readonly string? _defaultExtension;
@@ -148,7 +148,7 @@ namespace Avalonia.Native
         }
     }
 
-    internal unsafe class SystemDialogEvents : NativeCallbackBase, IAvnSystemDialogEvents
+    internal unsafe partial class SystemDialogEvents : NativeCallbackBase, IAvnSystemDialogEvents
     {
         private readonly TaskCompletionSource<string[]> _tcs;
 

@@ -282,6 +282,9 @@ public class DispatcherOperation
         }
         catch (Exception e)
         {
+            if (Platform.PlatformExceptionHandler.ShouldSuppress(Callback, e))
+                return;
+            
             lock (Dispatcher.InstanceLock)
             {
                 // Ensure TaskSource created.
