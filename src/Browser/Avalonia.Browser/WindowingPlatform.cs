@@ -69,6 +69,7 @@ internal class BrowserWindowingPlatform : IWindowingPlatform
             .Bind<IPlatformSettings>().ToSingleton<BrowserPlatformSettings>()
             .Bind<IWindowingPlatform>().ToConstant(instance)
             .Bind<IPlatformIconLoader>().ToSingleton<IconLoaderStub>()
+            .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
             .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>()
             .Bind<IActivatableLifetime>().ToSingleton<BrowserActivatableLifetime>();
         AvaloniaLocator.CurrentMutable.Bind<IDispatcherImpl>().ToSingleton<BrowserDispatcherImpl>();
