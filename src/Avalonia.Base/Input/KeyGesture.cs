@@ -95,7 +95,9 @@ namespace Avalonia.Input
             return new KeyGesture(key, keyModifiers);
         }
 
-        public override string ToString()
+        public override string ToString() => FormatWithKeyModifiers(Key, KeyModifiers);
+
+        internal static string FormatWithKeyModifiers(object gesture, KeyModifiers keyModifiers)
         {
             var s = StringBuilderCache.Acquire();
 
@@ -107,31 +109,31 @@ namespace Avalonia.Input
                 }
             }
 
-            if (KeyModifiers.HasAllFlags(KeyModifiers.Control))
+            if (keyModifiers.HasAllFlags(KeyModifiers.Control))
             {
                 s.Append("Ctrl");
             }
 
-            if (KeyModifiers.HasAllFlags(KeyModifiers.Shift))
+            if (keyModifiers.HasAllFlags(KeyModifiers.Shift))
             {
                 Plus(s);
                 s.Append("Shift");
             }
 
-            if (KeyModifiers.HasAllFlags(KeyModifiers.Alt))
+            if (keyModifiers.HasAllFlags(KeyModifiers.Alt))
             {
                 Plus(s);
                 s.Append("Alt");
             }
 
-            if (KeyModifiers.HasAllFlags(KeyModifiers.Meta))
+            if (keyModifiers.HasAllFlags(KeyModifiers.Meta))
             {
                 Plus(s);
                 s.Append("Cmd");
             }
 
             Plus(s);
-            s.Append(Key);
+            s.Append(gesture);
 
             return StringBuilderCache.GetStringAndRelease(s);
         }
@@ -150,7 +152,7 @@ namespace Avalonia.Input
             return EnumHelper.Parse<Key>(key, true);
         }
 
-        private static KeyModifiers ParseModifier(ReadOnlySpan<char> modifier)
+        internal static KeyModifiers ParseModifier(ReadOnlySpan<char> modifier)
         {
             if (modifier.Equals("ctrl".AsSpan(), StringComparison.OrdinalIgnoreCase))
             {
