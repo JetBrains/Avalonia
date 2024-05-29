@@ -45,6 +45,7 @@ internal class BrowserWindowingPlatform : IWindowingPlatform
             .Bind<IPlatformGraphics>().ToConstant(new BrowserSkiaGraphics())
             .Bind<IPlatformIconLoader>().ToSingleton<IconLoaderStub>()
             .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>()
+            .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
             .Bind<IActivatableLifetime>().ToSingleton<BrowserActivatableLifetime>();
 
         if (AvaloniaLocator.Current.GetService<BrowserPlatformOptions>() is { } options
