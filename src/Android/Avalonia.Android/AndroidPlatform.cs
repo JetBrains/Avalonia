@@ -89,6 +89,7 @@ namespace Avalonia.Android
                 .Bind<IRenderTimer>().ToConstant(new ChoreographerTimer())
                 .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>()
                 .Bind<KeyGestureFormatInfo>().ToConstant(new KeyGestureFormatInfo(new Dictionary<Key, string>() { }))
+                .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
                 .Bind<IActivatableLifetime>().ToConstant(new AndroidActivatableLifetime());
 
             var graphics = InitializeGraphics(Options);
