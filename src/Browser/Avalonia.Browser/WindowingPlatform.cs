@@ -93,6 +93,7 @@ internal class BrowserWindowingPlatform : IWindowingPlatform
             .Bind<IPlatformIconLoader>().ToSingleton<IconLoaderStub>()
             .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>()
             .Bind<KeyGestureFormatInfo>().ToConstant(new KeyGestureFormatInfo(new Dictionary<Key, string>() { }))
+            .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
             .Bind<IActivatableLifetime>().ToSingleton<BrowserActivatableLifetime>();
         if (IsManagedDispatcherEnabled)
         {
