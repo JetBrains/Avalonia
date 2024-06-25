@@ -692,14 +692,8 @@ namespace Avalonia.Controls
                 _shown = true;
                 IsVisible = true;
 
-                var initialSize = new Size(
-                    double.IsNaN(Width) ? Math.Max(MinWidth, ClientSize.Width) : Width,
-                    double.IsNaN(Height) ? Math.Max(MinHeight, ClientSize.Height) : Height);
-
-                if (initialSize != ClientSize)
-                {
-                    PlatformImpl?.Resize(initialSize, WindowResizeReason.Layout);
-                }
+                // Must be called before ExecuteInitialLayoutPass, because otherwise ExecuteInitialLayoutPass may set ClientSize using incorrect scaling
+                SetWindowStartupLocationAndSize(owner);
 
                 LayoutManager.ExecuteInitialLayoutPass();
 
@@ -710,8 +704,6 @@ namespace Avalonia.Controls
 
                 Owner = owner;
                 owner?.AddChild(this, false);
-
-                SetWindowStartupLocation(owner);
 
                 StartRendering();
                 PlatformImpl?.Show(ShowActivated, false);
@@ -771,14 +763,8 @@ namespace Avalonia.Controls
                 _showingAsDialog = true;
                 IsVisible = true;
 
-                var initialSize = new Size(
-                    double.IsNaN(Width) ? ClientSize.Width : Width,
-                    double.IsNaN(Height) ? ClientSize.Height : Height);
-
-                if (initialSize != ClientSize)
-                {
-                    PlatformImpl?.Resize(initialSize, WindowResizeReason.Layout);
-                }
+                // Must be called before ExecuteInitialLayoutPass, because otherwise ExecuteInitialLayoutPass may set ClientSize using incorrect scaling
+                SetWindowStartupLocationAndSize(owner);
 
                 LayoutManager.ExecuteInitialLayoutPass();
 
@@ -787,8 +773,6 @@ namespace Avalonia.Controls
                 PlatformImpl?.SetParent(owner.PlatformImpl!);
                 Owner = owner;
                 owner.AddChild(this, true);
-
-                SetWindowStartupLocation(owner);
 
                 StartRendering();
                 PlatformImpl?.Show(ShowActivated, true);
@@ -868,56 +852,75 @@ namespace Avalonia.Controls
             }
         }
 
-        private void SetWindowStartupLocation(Window? owner = null)
+        private void SetWindowStartupLocationAndSize(Window? owner = null)
         {
-            if (_wasShownBefore == true)
+            var initialSize = new Size(
+                double.IsNaN(Width) ? ClientSize.Width : Width,
+                double.IsNaN(Height) ? ClientSize.Height : Height);
+
+            if (!_wasShownBefore)
             {
-                return;
-            }
+                var startupLocation = WindowStartupLocation;
 
-            var startupLocation = WindowStartupLocation;
-
-            if (startupLocation == WindowStartupLocation.CenterOwner &&
-                (owner is null ||
-                 (Owner is Window ownerWindow && ownerWindow.WindowState == WindowState.Minimized))
-                )
-            {
-                // If startup location is CenterOwner, but owner is null or minimized then fall back
-                // to CenterScreen. This behavior is consistent with WPF.
-                startupLocation = WindowStartupLocation.CenterScreen;
-            }
-
-            var scaling = owner?.DesktopScaling ?? PlatformImpl?.DesktopScaling ?? 1;
-
-            // Use frame size, falling back to client size if the platform can't give it to us.
-            var rect = FrameSize.HasValue ?
-                new PixelRect(PixelSize.FromSize(FrameSize.Value, scaling)) :
-                new PixelRect(PixelSize.FromSize(ClientSize, scaling));
-
-            if (startupLocation == WindowStartupLocation.CenterScreen)
-            {
-                Screen? screen = null;
-
-                if (owner is not null)
+                if (startupLocation == WindowStartupLocation.CenterOwner &&
+                    (owner is null ||
+                     (Owner is Window ownerWindow && ownerWindow.WindowState == WindowState.Minimized))
+                   )
                 {
-                    screen = Screens.ScreenFromWindow(owner)
-                             ?? Screens.ScreenFromPoint(owner.Position);
+                    // If startup location is CenterOwner, but owner is null or minimized then fall back
+                    // to CenterScreen. This behavior is consistent with WPF.
+                    startupLocation = WindowStartupLocation.CenterScreen;
                 }
 
-                screen ??= Screens.ScreenFromPoint(Position);
-
-                if (screen is not null)
+                void CenterRect(PixelRect parentRect, Screen expectedScreen, double scaling)
                 {
-                    Position = screen.WorkingArea.CenterRect(rect).Position;
+                    var rect = new PixelRect(PixelSize.FromSize(initialSize, scaling));
+
+                    var position = parentRect.CenterRect(rect).Position;
+                    var actualScreen = Screens.ScreenFromPoint(position);
+                    if (actualScreen == null)
+                    {
+                        // positioning will be outside visible area - header will be not accessible
+                        position = expectedScreen.WorkingArea.Position;
+                    }
+                    
+                    Position = position;
+                }
+                
+                if (startupLocation == WindowStartupLocation.CenterScreen)
+                {
+                    Screen? screen = null;
+
+                    if (owner is not null)
+                    {
+                        screen = Screens.ScreenFromWindow(owner)
+                                 ?? Screens.ScreenFromPoint(owner.Position);
+                    }
+
+                    screen ??= Screens.ScreenFromPoint(Position);
+
+                    if (screen is not null)
+                    {
+                        CenterRect(screen.WorkingArea, screen, screen.Scaling);
+                    }
+                }
+                else if (startupLocation == WindowStartupLocation.CenterOwner)
+                {
+                    var scaling = owner?.DesktopScaling ?? PlatformImpl?.DesktopScaling ?? 1;
+
+                    var ownerSize = owner!.FrameSize ?? owner.ClientSize;
+                    var ownerRect = new PixelRect(
+                        owner.Position,
+                        PixelSize.FromSize(ownerSize, scaling));
+                    
+                    CenterRect(ownerRect, Screens.ScreenFromWindow(owner), scaling);
                 }
             }
-            else if (startupLocation == WindowStartupLocation.CenterOwner)
+            
+            if (initialSize != ClientSize)
             {
-                var ownerSize = owner!.FrameSize ?? owner.ClientSize;
-                var ownerRect = new PixelRect(
-                    owner.Position,
-                    PixelSize.FromSize(ownerSize, scaling));
-                Position = ownerRect.CenterRect(rect).Position;
+                // Resize must be after setting Position, otherwise in some cases scaling will not be applied
+                PlatformImpl?.Resize(initialSize, WindowResizeReason.Layout);
             }
         }
 
