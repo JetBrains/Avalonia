@@ -129,6 +129,7 @@ namespace Avalonia.Win32
                     }
 
                 case WindowsMessage.WM_DPICHANGED:
+                    if (!_ignoreDpiChanges)
                     {
                         var dpi = ToInt32(wParam) & 0xffff;
                         var newDisplayRect = Marshal.PtrToStructure<RECT>(lParam);
@@ -161,6 +162,7 @@ namespace Avalonia.Win32
                             SetWindowPosFlags.SWP_NOZORDER |
                             SetWindowPosFlags.SWP_NOACTIVATE);
                     }
+                    break;
 
                 case WindowsMessage.WM_KEYDOWN:
                 case WindowsMessage.WM_SYSKEYDOWN:
