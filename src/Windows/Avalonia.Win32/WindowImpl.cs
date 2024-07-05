@@ -555,10 +555,10 @@ namespace Avalonia.Win32
                     if (GetDpiForMonitor(
                             monitor,
                             MONITOR_DPI_TYPE.MDT_EFFECTIVE_DPI,
-                            out _dpi,
+                            out var _dpi,
                             out _) == 0)
                     {
-                        _scaling = _dpi / StandardDpi;
+                        _scaling = _dpi / 96d;
                     }
                 }
             }
