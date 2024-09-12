@@ -79,7 +79,7 @@ namespace Avalonia.Controls.Selection
                 {
                     for (var i = range.Begin; i <= range.End; ++i)
                     {
-                        yield return items is object ? items[i] : default;
+                        yield return items is object && i < items.Count ? items[i] : default;
                     }
                 }
             }
