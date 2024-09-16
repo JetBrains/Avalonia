@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using Avalonia.Utilities;
 using Xunit;
 
 namespace Avalonia.Controls.UnitTests.Utils
 {
-    public class SafeEnumerableListTests
+    public class SafeEnumerableSetTests
     {
         [Fact]
         public void List_Is_Not_Copied_Outside_Enumeration()
         {
-            var target = new SafeEnumerableList<string>();
+            var target = new SafeEnumerableSet<string>();
             var inner = target.Inner;
 
             target.Add("foo");
@@ -22,7 +23,7 @@ namespace Avalonia.Controls.UnitTests.Utils
         [Fact]
         public void List_Is_Copied_Outside_Enumeration()
         {
-            var target = new SafeEnumerableList<string>();
+            var target = new SafeEnumerableSet<string>();
             var inner = target.Inner;
 
             target.Add("foo");
@@ -37,19 +38,20 @@ namespace Avalonia.Controls.UnitTests.Utils
 
             inner = target.Inner;
 
+            var counter = 0;
             foreach (var i in target)
             {
-                target.Add("baz");
+                target.Add("baz" + (counter++).ToString(CultureInfo.InvariantCulture));
                 Assert.NotSame(inner, target.Inner);
             }
 
-            Assert.Equal(new[] { "foo", "bar", "baz", "baz" }, target);
+            Assert.Equal(new[] { "foo", "bar", "baz0", "baz1" }, target);
         }
 
         [Fact]
         public void List_Is_Not_Copied_After_Enumeration()
         {
-            var target = new SafeEnumerableList<string>();
+            var target = new SafeEnumerableSet<string>();
             var inner = target.Inner;
 
             target.Add("foo");
@@ -69,7 +71,7 @@ namespace Avalonia.Controls.UnitTests.Utils
         [Fact]
         public void List_Is_Copied_Only_Once_During_Enumeration()
         {
-            var target = new SafeEnumerableList<string>();
+            var target = new SafeEnumerableSet<string>();
             var inner = target.Inner;
 
             target.Add("foo");
@@ -89,15 +91,16 @@ namespace Avalonia.Controls.UnitTests.Utils
         [Fact]
         public void List_Is_Copied_During_Nested_Enumerations()
         {
-            var target = new SafeEnumerableList<string>();
+            var target = new SafeEnumerableSet<string>();
             var initialInner = target.Inner;
             var firstItems = new List<string>();
             var secondItems = new List<string>();
-            List<string> firstInner;
-            List<string> secondInner;
+            HashSet<string> firstInner;
+            HashSet<string> secondInner;
 
             target.Add("foo");
 
+            var counter = 0;
             foreach (var i in target)
             {
                 target.Add("bar");
@@ -107,7 +110,7 @@ namespace Avalonia.Controls.UnitTests.Utils
 
                 foreach (var j in target)
                 {
-                    target.Add("baz");
+                    target.Add("baz" + (counter++).ToString(CultureInfo.InvariantCulture));
 
                     secondInner = target.Inner;
                     Assert.NotSame(firstInner, secondInner);
@@ -120,7 +123,7 @@ namespace Avalonia.Controls.UnitTests.Utils
 
             Assert.Equal(new[] { "foo" }, firstItems);
             Assert.Equal(new[] { "foo", "bar" }, secondItems);
-            Assert.Equal(new[] { "foo", "bar", "baz", "baz" }, target);
+            Assert.Equal(new[] { "foo", "bar", "baz0", "baz1" }, target);
 
             var finalInner = target.Inner;
             target.Add("final");
