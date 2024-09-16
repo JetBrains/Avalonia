@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Collections;
 using Avalonia.Utilities;
 
@@ -13,7 +14,7 @@ namespace Avalonia.Controls
     /// </remarks>
     public class Classes : AvaloniaList<string>, IPseudoClasses
     {
-        private SafeEnumerableList<IClassesChangedListener>? _listeners;
+        private HashSet<IClassesChangedListener>? _listeners;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Classes"/> class.
@@ -316,7 +317,7 @@ namespace Avalonia.Controls
         {
             if (_listeners is null)
                 return;
-            foreach (var listener in _listeners)
+            foreach (var listener in _listeners.ToArray())
                 listener.Changed();
         }
 
