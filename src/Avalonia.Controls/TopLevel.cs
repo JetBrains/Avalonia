@@ -901,7 +901,7 @@ namespace Avalonia.Controls
                 var clientPoint = this.PointToClient(lastPos);
                 if (dirtyRect.Contains(clientPoint))
                 {
-                    _tooltipService.Update(this, HitTester.HitTestFirst(clientPoint, this, null));
+                    _tooltipService.Update(this, HitTester.HitTestFirst(clientPoint, this, x => x.GetValue(IsHitTestVisibleProperty)));
                 }
             }
         }
