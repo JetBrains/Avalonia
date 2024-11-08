@@ -1413,12 +1413,12 @@ namespace Avalonia.Media.TextFormatting
 
             var extent = inkBounds.Height;
             //The height of overhanging pixels at the bottom
-            var overhangAfter = inkBounds.Bottom - height + halfLineGap;
+            var overhangAfter = Math.Max(0, inkBounds.Bottom - height + halfLineGap);
             //The width of overhanging pixels at the natural alignment point. Positive value means we are inside.
-            var overhangLeading = inkBounds.Left;
+            var overhangLeading = Math.Abs(Math.Min(inkBounds.Left, 0));
             //The width of overhanging pixels at the end of the natural bounds. Positive value means we are inside.
-            var overhangTrailing = widthIncludingWhitespace - inkBounds.Right;
-            var hasOverflowed = width > _paragraphWidth;
+            var overhangTrailing = Math.Max(0, inkBounds.Right - widthIncludingWhitespace);
+            var hasOverflowed = width > _paragraphWidth + 0.0001;
 
             var start = GetParagraphOffsetX(width, widthIncludingWhitespace);
 
