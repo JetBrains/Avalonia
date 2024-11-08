@@ -1332,7 +1332,7 @@ namespace Avalonia.Media.TextFormatting
             var overhangLeading = Math.Abs(Math.Min(bounds.Left, 0));
             //The width of overhanging pixels at the end
             var overhangTrailing = Math.Max(0, bounds.Right - widthIncludingWhitespace);
-            var hasOverflowed = width > _paragraphWidth;
+            var hasOverflowed = width > _paragraphWidth + 0.0001;
 
             if (!double.IsNaN(lineHeight) && !MathUtilities.IsZero(lineHeight))
             {
