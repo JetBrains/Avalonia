@@ -924,7 +924,7 @@ namespace Avalonia.Media.TextFormatting.Unicode
             var hasET = (wRules & (1U << (int)BidiClass.EuropeanTerminator)) != 0U;
 
             // Rule W2
-            if (hasEN)
+            if (hasEN && hasAL)
             {
                 for (i = 0; i < _runLength; i++)
                 {
