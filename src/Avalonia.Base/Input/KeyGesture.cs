@@ -105,6 +105,9 @@ namespace Avalonia.Input
         /// <returns>The formatted string.</returns>
         /// <exception cref="FormatException">Thrown if the format string is not null, "", "g", or "p"</exception>
         public string ToString(string? format, IFormatProvider? formatProvider)
+            => FormatWithKeyModifiers(Key, KeyModifiers, format, formatProvider);
+
+        internal static string FormatWithKeyModifiers(object gesture, KeyModifiers keyModifiers, string? format, IFormatProvider? formatProvider)
         {
             var formatInfo = format switch
             {
@@ -123,33 +126,41 @@ namespace Avalonia.Input
                 }
             }
 
-            if (KeyModifiers.HasAllFlags(KeyModifiers.Control))
+            if (keyModifiers.HasAllFlags(KeyModifiers.Control))
             {
                 s.Append(formatInfo.Ctrl);
             }
 
-            if (KeyModifiers.HasAllFlags(KeyModifiers.Shift))
+            if (keyModifiers.HasAllFlags(KeyModifiers.Shift))
             {
                 Plus(s);
                 s.Append(formatInfo.Shift);
             }
 
-            if (KeyModifiers.HasAllFlags(KeyModifiers.Alt))
+            if (keyModifiers.HasAllFlags(KeyModifiers.Alt))
             {
                 Plus(s);
                 s.Append(formatInfo.Alt);
             }
 
-            if (KeyModifiers.HasAllFlags(KeyModifiers.Meta))
+            if (keyModifiers.HasAllFlags(KeyModifiers.Meta))
             {
                 Plus(s);
                 s.Append(formatInfo.Meta);
             }
 
-            if ((Key != Key.None) || (KeyModifiers == KeyModifiers.None))
+            if (gesture is Key key)
+            {
+                if ((key != Key.None) || (keyModifiers == KeyModifiers.None))
+                {
+                    Plus(s);
+                    s.Append(formatInfo.FormatKey(key));
+                }
+            }
+            else
             {
                 Plus(s);
-                s.Append(formatInfo.FormatKey(Key));
+                s.Append(gesture);
             }
 
             return StringBuilderCache.GetStringAndRelease(s);
@@ -173,7 +184,7 @@ namespace Avalonia.Input
             return false;
         }
 
-        private static KeyModifiers ParseModifier(ReadOnlySpan<char> modifier)
+        internal static KeyModifiers ParseModifier(ReadOnlySpan<char> modifier)
         {
             if (modifier.Equals("ctrl".AsSpan(), StringComparison.OrdinalIgnoreCase))
             {
