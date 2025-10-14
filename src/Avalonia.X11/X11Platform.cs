@@ -81,6 +81,7 @@ namespace Avalonia.X11
                     ? new GlibDispatcherImpl(this)
                     : new X11PlatformThreading(this))
                 .Bind<IRenderTimer>().ToConstant(timer)
+                .Bind<PlatformPointerConfiguration>().ToSingleton<PlatformPointerConfiguration>()
                 .Bind<PlatformHotkeyConfiguration>().ToConstant(new PlatformHotkeyConfiguration(KeyModifiers.Control))
                 .Bind<KeyGestureFormatInfo>().ToConstant(new KeyGestureFormatInfo(new Dictionary<Key, string>() { }, meta: "Super"))
                 .Bind<IKeyboardDevice>().ToFunc(() => KeyboardDevice)
