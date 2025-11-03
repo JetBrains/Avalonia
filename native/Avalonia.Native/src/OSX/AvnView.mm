@@ -332,15 +332,14 @@
     switch(event.buttonNumber)
     {
         case 2:
-        case 3:
             _isMiddlePressed = true;
             [self mouseEvent:event withType:MiddleButtonDown];
             break;
-        case 4:
+        case 3:
             _isXButton1Pressed = true;
             [self mouseEvent:event withType:XButton1Down];
             break;
-        case 5:
+        case 4:
             _isXButton2Pressed = true;
             [self mouseEvent:event withType:XButton2Down];
             break;
@@ -368,15 +367,14 @@
     switch(event.buttonNumber)
     {
         case 2:
-        case 3:
             _isMiddlePressed = false;
             [self mouseEvent:event withType:MiddleButtonUp];
             break;
-        case 4:
+        case 3:
             _isXButton1Pressed = false;
             [self mouseEvent:event withType:XButton1Up];
             break;
-        case 5:
+        case 4:
             _isXButton2Pressed = false;
             [self mouseEvent:event withType:XButton2Up];
             break;
