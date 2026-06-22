@@ -159,6 +159,13 @@ namespace Avalonia.FreeDesktop
             private void DoLayoutReset()
             {
                 _resetQueued = false;
+                // A reset can be queued via QueueReset() (posted at Background priority) and then
+                // run after the exporter has already been disposed. Disposing removes the handler
+                // from its PathHandler (PathHandler.Remove sets the generated handler's PathHandler
+                // property to null), so EmitLayoutUpdated would dereference a null PathHandler and
+                // throw a NullReferenceException (DTRC-31979). Skip the emit once disposed.
+                if (_disposed)
+                    return;
                 foreach (var i in _idsToItems.Values)
                     i.PropertyChanged -= OnItemPropertyChanged;
                 foreach(var menu in _menus)
